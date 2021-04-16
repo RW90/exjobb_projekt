@@ -11,6 +11,6 @@ public class HelloController {
 
     @GetMapping
     public Mono<String> getHelloMessage() {
-        return Mono.just("Hello from Glada grabbarna! Here comes the exjobb app!");
+        return Mono.just("Hello from Glada grabbarna! Here comes the exjobb app! Senaste uppdatering!!");
     }
 }
