@@ -24,7 +24,7 @@ class FileLogReaderTest {
         try {
             var lines = reader.readAllLines();
             lines.take(15).subscribe(System.out::println);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println(e);
             fail("IOException caught");
         }
