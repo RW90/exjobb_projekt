@@ -19,6 +19,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child1",
 				parent: "order",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,
@@ -27,6 +28,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child2",
 				parent: "billing",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,
@@ -35,6 +37,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child3",
 				parent: "address",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,
@@ -43,6 +46,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child4",
 				parent: "order",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,
@@ -51,6 +55,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child5",
 				parent: "billing",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,
@@ -59,6 +64,7 @@ const exampleSnapshot = {
 			data: {
 				id: "child6",
 				parent: "address",
+				endpoints: ["/billing", "/customer"],
 			},
 			classes: ["ms"],
 			selectable: false,

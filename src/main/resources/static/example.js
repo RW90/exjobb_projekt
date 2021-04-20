@@ -1,5 +1,25 @@
 import exampleSnapshot from "./exampleSnapshot.js";
 
+const informationContainer = document.getElementById("informationContainer");
+let nameContainer = informationContainer.firstElementChild;
+let endpointsContainer =
+	informationContainer.firstElementChild.nextElementSibling;
+
+function displayServiceInfo(info) {
+	nameContainer.innerText = info.name;
+
+	info.endpoints.forEach((endpoint) => {
+		let endpointItem = document.createElement("li");
+		endpointItem.innerText = endpoint;
+		endpointsContainer.appendChild(endpointItem);
+	});
+}
+
+function clearDisplayedServiceInfo() {
+	nameContainer.innerText = "";
+	endpointsContainer.innerHTML = "";
+}
+
 let cy = cytoscape({
 	container: document.getElementById("cyCanvas"),
 	elements: exampleSnapshot.elements,
@@ -11,7 +31,7 @@ let cy = cytoscape({
 			},
 		},
 		{
-			selector: ".banan",
+			selector: ".msSelected",
 			style: {
 				"background-color": "red",
 			},
@@ -37,12 +57,17 @@ cy.layout({
 
 cy.nodes(".ms").on("mouseover", (event) => {
 	event.stopPropagation();
-	event.target.addClass("banan");
+	displayServiceInfo({
+		name: event.target._private.data.id,
+		endpoints: event.target._private.data.endpoints,
+	});
+	event.target.addClass("msSelected");
 });
 
 cy.nodes(".ms").on("mouseout", (event) => {
 	event.stopPropagation();
-	event.target.removeClass("banan");
+	clearDisplayedServiceInfo();
+	event.target.removeClass("msSelected");
 });
 
 // let cy = cytoscape({
