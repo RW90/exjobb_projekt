@@ -11,6 +11,12 @@ let cy = cytoscape({
 			},
 		},
 		{
+			selector: ".banan",
+			style: {
+				"background-color": "red",
+			},
+		},
+		{
 			selector: "edge",
 			style: {
 				width: 3,
@@ -28,6 +34,16 @@ cy.layout({
 	avoidOverlap: true,
 	animate: false,
 }).run();
+
+cy.nodes(".ms").on("mouseover", (event) => {
+	event.stopPropagation();
+	event.target.addClass("banan");
+});
+
+cy.nodes(".ms").on("mouseout", (event) => {
+	event.stopPropagation();
+	event.target.removeClass("banan");
+});
 
 // let cy = cytoscape({
 // 	container: document.getElementById("cyCanvas"),
