@@ -20,13 +20,33 @@ let cy = cytoscape({
         },
     ]
 });
+const eventSource = new EventSource("/logstream");
+let i = 1;
+eventSource.onmessage = function ({data:systemId}){
+    let cyData = {
+            systems: [
+            {
+                data: {
+                    id: systemId
+                }
+            },
+            {
+                data: {
+                    id: i++,
+                    parent: systemId
+                }
+            }
 
-cy.add(snapshot.systems);
-cy.add(snapshot.edges)
-cy.layout({
-    name: 'cola',
-    infinite: true,
-    fit: false,
-    animate: false
-}).run();
+    ]};
+    cy.add(cyData.systems);
+    cy.layout({
+        name: 'cose',
+        infinite: true,
+        fit: false,
+        animate: false
+    }).run();
+}
+
+//cy.add(snapshot.systems);
+//cy.add(snapshot.edges)
 console.log(snapshot);
