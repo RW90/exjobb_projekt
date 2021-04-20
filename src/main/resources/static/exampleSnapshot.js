@@ -1,5 +1,5 @@
 const exampleSnapshot = {
-	systems: [
+	elements: [
 		{
 			data: {
 				id: "billing",
