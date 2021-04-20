@@ -21,6 +21,6 @@ public class FileLogReader implements LogReader {
             System.err.println(e);
         }
 
-        return Flux.fromStream(logLines).skip(1).delayElements(Duration.ofMillis(50));
+        return Flux.fromStream(logLines).skip(1).delayElements(Duration.ofMillis(1000));
     }
 }
