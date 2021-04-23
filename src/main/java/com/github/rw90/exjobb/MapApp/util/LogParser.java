@@ -1,5 +1,6 @@
 package com.github.rw90.exjobb.MapApp.util;
 
+import com.github.rw90.exjobb.MapApp.model.AccessLogLine;
 import reactor.core.publisher.Flux;
 
 public class LogParser {
@@ -10,6 +11,11 @@ public class LogParser {
                 .map(line -> line.split("appName=")[1])
                 .map(line -> line.substring(0, line.indexOf(",")))
                 .distinct();
+    }
+
+    public static Flux<AccessLogLine> parseAccessLogLine(Flux<String> log) {
+
+        return null;
     }
 
 }
