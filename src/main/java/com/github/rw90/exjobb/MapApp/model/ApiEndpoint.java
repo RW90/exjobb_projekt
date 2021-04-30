@@ -19,4 +19,22 @@ public class ApiEndpoint {
     public String getPath() {
         return path;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ApiEndpoint that = (ApiEndpoint) o;
+
+        if (method != that.method) return false;
+        return path.equals(that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = method.hashCode();
+        result = 31 * result + path.hashCode();
+        return result;
+    }
 }

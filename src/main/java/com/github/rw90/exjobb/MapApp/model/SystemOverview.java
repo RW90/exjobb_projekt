@@ -38,4 +38,12 @@ public class SystemOverview {
     public Set<Dependency> getDependencies() {
         return dependencies;
     }
+
+    @Override
+    public String toString() {
+        return "SystemOverview{" +
+                "services=" + services +
+                ", dependencies=" + dependencies +
+                '}';
+    }
 }

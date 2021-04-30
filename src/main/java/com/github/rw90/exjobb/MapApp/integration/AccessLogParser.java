@@ -15,7 +15,7 @@ public class AccessLogParser {
     private static final int SERVICE_NAME_FIELD = 1;
     private static final int HTTP_METHOD_FIELD = 0;
 
-    public static Flux<AccessLogLine> accessLogLineFlux(AccessLogFileReader reader) throws IOException, CsvException {
+    public static Flux<AccessLogLine> accessLogLineFlux(AccessLogFileReader reader) throws IOException {
         return reader
                 .readAll()
                 .map(logEntry -> logEntryToAccessLogLine(logEntry));
@@ -31,7 +31,7 @@ public class AccessLogParser {
         int uuidEndIndex = StringUtils.lastIndexOf(logMessage,']');
         String possibleTraceId = logMessage.substring(uuidStartIndex, uuidEndIndex);
         UUID uuid = uuidOrNull(possibleTraceId);
-        return new AccessLogLine(method, requestLineParts[1], serviceName, uuid);
+        return new AccessLogLine(method, StringUtils.substringBefore(requestLineParts[1], "?"), serviceName, uuid);
     }
 
     private static UUID uuidOrNull(String possibleTraceId) {
