@@ -1,5 +1,6 @@
 package com.github.rw90.exjobb.MapApp.util;
 
+import com.github.rw90.exjobb.MapApp.model.AccessLogLine;
 import reactor.core.publisher.Flux;
 
 public class LogParser {
@@ -12,9 +13,9 @@ public class LogParser {
                 .distinct();
     }
 
+    public static Flux<AccessLogLine> parseAccessLogLine(Flux<String> log) {
+
+        return null;
+    }
+
 }
-//order, appVersion=1.0.422, scmRevision=78bc326]
-
-//"2021-04-14 04:09:38,567 INFO  [main] [org.springframework.boot.actuate.audit.listener.AuditListener] [NONE] - AuditEvent [timestamp=1618366178566, type=ContextRefreshed, appName=order, appVersion=1.0.422, scmRevision=78bc326]"
-
-//"2021-04-14 02:09:38.567","2021-04-14 04:09:38,567 INFO  [main] [org.springframework.boot.actuate.audit.listener.AuditListener] [NONE] - AuditEvent [timestamp=1618366178566, type=ContextRefreshed, appName=order, appVersion=1.0.422, scmRevision=78bc326]"
