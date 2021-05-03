@@ -1,31 +1,49 @@
 package com.github.rw90.exjobb.MapApp.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SystemOverview {
 
-    private List<Microservice> services;
-    private List<Dependency> dependencies;
+    private Set<Microservice> services;
+    private Set<Dependency> dependencies;
 
     public SystemOverview() {
-        services = new ArrayList<>();
-        dependencies = new ArrayList<>();
+        services = new HashSet<>();
+        dependencies = new HashSet<>();
     }
 
-    public void addService(Microservice service) {
-        services.add(service);
+    public boolean addService(Microservice service) {
+        return services.add(service);
     }
 
-    public void addDependency(Dependency dependency) {
-        dependencies.add(dependency);
+    public boolean addDependency(Dependency dependency) {
+        return dependencies.add(dependency);
     }
 
-    public List<Microservice> getServices() {
+    public Microservice getServiceByName(String name) {
+        return services.stream()
+                .filter(service -> service.getName().equals(name))
+                .findFirst()
+                .orElseThrow();
+
+    }
+
+    public Set<Microservice> getServices() {
         return services;
     }
 
-    public List<Dependency> getDependencies() {
+    public Set<Dependency> getDependencies() {
         return dependencies;
+    }
+
+    @Override
+    public String toString() {
+        return "SystemOverview{" +
+                "services=" + services +
+                ", dependencies=" + dependencies +
+                '}';
     }
 }

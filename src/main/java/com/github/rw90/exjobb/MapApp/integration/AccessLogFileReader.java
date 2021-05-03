@@ -22,7 +22,7 @@ public class AccessLogFileReader {
     }
 
     // takes path to unmodified csv access log file and returns flux of string arrays containing values from each line in file
-    public Flux<String[]> readAll() throws IOException, CsvException {
+    public Flux<String[]> readAll() throws IOException {
         Path logFilePreparedForReading = createReversedLogFile(pathToLogFile, Path.of("src/main/resources/tmp.csv"));
         List<String[]> logEntries = logFileToList(logFilePreparedForReading);
         return Flux.fromStream(logEntries.stream().map(entry -> Arrays.copyOfRange(entry, 1, 3)));
@@ -41,9 +41,14 @@ public class AccessLogFileReader {
     }
 
     // read csv-file top to bottom and return list of string arrays containg the comma separated values
-    private List<String[]> logFileToList(Path pathToFile) throws IOException, CsvException {
+    private List<String[]> logFileToList(Path pathToFile) throws IOException {
         CSVReader reader = new CSVReader(new FileReader(pathToFile.toFile()));
-        List<String[]> logEntries = reader.readAll();
+        List<String[]> logEntries = null;
+        try {
+            logEntries = reader.readAll();
+        } catch (CsvException e) {
+            throw new IOException(e.getMessage());
+        }
         return logEntries;
     }
 }
