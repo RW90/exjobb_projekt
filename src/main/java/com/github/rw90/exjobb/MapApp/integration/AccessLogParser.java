@@ -1,27 +1,29 @@
 package com.github.rw90.exjobb.MapApp.integration;
 
 import com.github.rw90.exjobb.MapApp.model.AccessLogLine;
-import com.opencsv.exceptions.CsvException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class AccessLogParser {
+@Component
+public class AccessLogParser implements LogParser<AccessLogLine> {
 
-    private static final int MESSAGE_FIELD = 0;
-    private static final int SERVICE_NAME_FIELD = 1;
-    private static final int HTTP_METHOD_FIELD = 0;
+    private final int MESSAGE_FIELD = 0;
+    private final int SERVICE_NAME_FIELD = 1;
+    private final int HTTP_METHOD_FIELD = 0;
 
-    public static Flux<AccessLogLine> accessLogLineFlux(AccessLogFileReader reader) throws IOException {
+    @Override
+    public Flux<AccessLogLine> logLinesFlux(CsvLogFileReader reader) throws IOException {
         return reader
-                .readAll()
-                .map(logEntry -> logEntryToAccessLogLine(logEntry));
+                .readAllLines()
+                .map(this::logEntryToAccessLogLine);
     }
 
-    private static AccessLogLine logEntryToAccessLogLine(String[] logEntry) {
+    private AccessLogLine logEntryToAccessLogLine(String[] logEntry) {
         String serviceName = logEntry[SERVICE_NAME_FIELD];
         String logMessage = logEntry[MESSAGE_FIELD];
         String requestLine = StringUtils.substringBetween(logMessage, "\"");
@@ -34,7 +36,7 @@ public class AccessLogParser {
         return new AccessLogLine(method, StringUtils.substringBefore(requestLineParts[1], "?"), serviceName, uuid);
     }
 
-    private static UUID uuidOrNull(String possibleTraceId) {
+    private UUID uuidOrNull(String possibleTraceId) {
         return possibleTraceId.length() == 36 ? UUID.fromString(possibleTraceId) : null;
     }
 }
