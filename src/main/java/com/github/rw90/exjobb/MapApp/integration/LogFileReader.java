@@ -4,7 +4,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 
-public interface CsvLogFileReader {
+public interface LogFileReader {
 
     public Flux<String[]> readAllLines() throws IOException;
 }

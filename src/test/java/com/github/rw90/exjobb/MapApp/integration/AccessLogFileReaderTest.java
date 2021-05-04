@@ -1,12 +1,10 @@
 package com.github.rw90.exjobb.MapApp.integration;
 
-import com.github.rw90.exjobb.MapApp.model.AccessLogLine;
 import com.github.rw90.exjobb.MapApp.util.FileReverserImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpMethod;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -15,11 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
-class AccessLogParserTest {
+class AccessLogFileReaderTest {
 
-    private AccessLogParser parser;
     private LogFileReader reader;
     private Path tempFile;
 
@@ -35,7 +31,6 @@ class AccessLogParserTest {
         tempFile = Files.createTempFile("testLogs", ".csv");
         Files.write(tempFile, lines);
         reader = new AccessLogFileReader(new FileReverserImpl(), tempFile);
-        parser = new AccessLogParser(reader);
     }
 
     @AfterEach
@@ -44,9 +39,9 @@ class AccessLogParserTest {
     }
 
     @Test
-    @DisplayName("should return all lines except headers")
-    void allLines() throws IOException {
-        Flux<AccessLogLine> lines = parser.parseLines();
+    @DisplayName("should ignore headers")
+    void ignoreHeaders() throws IOException {
+        Flux<String[]> lines = reader.readAllLines();
         StepVerifier
                 .create(lines)
                 .expectNextCount(3)
@@ -54,39 +49,23 @@ class AccessLogParserTest {
     }
 
     @Test
-    @DisplayName("should parse line")
-    void correctParsing() throws IOException {
-        Flux<AccessLogLine> lines = parser.parseLines();
-        AccessLogLine expected = new AccessLogLine(HttpMethod.POST, "/calculate", "calculate", UUID.fromString("525891db-d583-4dfa-87ca-9500f8da0192"));
+    @DisplayName("should ignore timestamp field")
+    void ignoreTimestampField() throws IOException {
+        Flux<String[]> lines = reader.readAllLines();
         StepVerifier
                 .create(lines)
-                .expectNext(expected)
+                .expectNextMatches(line -> line.length == 2)
                 .thenCancel()
                 .verify();
     }
 
     @Test
-    @DisplayName("should not include request params when parsing")
-    void correctParsing2() throws IOException {
-        Flux<AccessLogLine> lines = parser.parseLines();
-        AccessLogLine expected = new AccessLogLine(HttpMethod.GET, "/adress", "adress", UUID.fromString("0aecdb60-0338-49b4-ac36-f5fd871ef7c2"));
+    @DisplayName("should contain service name in second field")
+    void serviceNameInSecondField() throws IOException {
+        Flux<String[]> lines = reader.readAllLines();
         StepVerifier
                 .create(lines)
-                .expectNextCount(2)
-                .expectNext(expected)
-                .thenCancel()
-                .verify();
-    }
-
-    @Test
-    @DisplayName("should parse both types of formatted log messages")
-    void correctParsing3() throws IOException {
-        Flux<AccessLogLine> lines = parser.parseLines();
-        AccessLogLine expected = new AccessLogLine(HttpMethod.POST, "/startpoint2", "adress-gw", null);
-        StepVerifier
-                .create(lines)
-                .expectNextCount(1)
-                .expectNext(expected)
+                .expectNextMatches(line -> line[1].equals("calculate"))
                 .thenCancel()
                 .verify();
     }
