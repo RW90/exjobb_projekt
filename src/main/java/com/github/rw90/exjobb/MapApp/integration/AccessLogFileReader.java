@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccessLogFileReader {
+public class AccessLogFileReader implements CsvLogFileReader {
 
     private Path pathToLogFile;
 
@@ -22,7 +22,8 @@ public class AccessLogFileReader {
     }
 
     // takes path to unmodified csv access log file and returns flux of string arrays containing values from each line in file
-    public Flux<String[]> readAll() throws IOException {
+    @Override
+    public Flux<String[]> readAllLines() throws IOException {
         Path logFilePreparedForReading = createReversedLogFile(pathToLogFile, Files.createTempFile("accesslog", ".csv"));
         List<String[]> logEntries = logFileToList(logFilePreparedForReading);
         return Flux.fromStream(logEntries.stream().map(entry -> Arrays.copyOfRange(entry, 1, 3)));

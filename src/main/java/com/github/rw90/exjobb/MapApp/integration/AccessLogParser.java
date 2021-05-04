@@ -17,7 +17,7 @@ public class AccessLogParser {
 
     public static Flux<AccessLogLine> accessLogLineFlux(AccessLogFileReader reader) throws IOException {
         return reader
-                .readAll()
+                .readAllLines()
                 .map(logEntry -> logEntryToAccessLogLine(logEntry));
     }
 
