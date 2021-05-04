@@ -12,15 +12,15 @@ import java.util.UUID;
 @Component
 public class AccessLogParser implements LogParser<AccessLogLine> {
 
-    private static final int MESSAGE_FIELD = 0;
-    private static final int SERVICE_NAME_FIELD = 1;
-    private static final int HTTP_METHOD_FIELD = 0;
+    private final int MESSAGE_FIELD = 0;
+    private final int SERVICE_NAME_FIELD = 1;
+    private final int HTTP_METHOD_FIELD = 0;
 
     @Override
     public Flux<AccessLogLine> logLinesFlux(CsvLogFileReader reader) throws IOException {
         return reader
                 .readAllLines()
-                .map(logEntry -> logEntryToAccessLogLine(logEntry));
+                .map(this::logEntryToAccessLogLine);
     }
 
     private AccessLogLine logEntryToAccessLogLine(String[] logEntry) {
