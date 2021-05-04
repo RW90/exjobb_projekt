@@ -23,7 +23,7 @@ public class AccessLogFileReader {
 
     // takes path to unmodified csv access log file and returns flux of string arrays containing values from each line in file
     public Flux<String[]> readAll() throws IOException {
-        Path logFilePreparedForReading = createReversedLogFile(pathToLogFile, Path.of("src/main/resources/tmp.csv"));
+        Path logFilePreparedForReading = createReversedLogFile(pathToLogFile, Files.createTempFile("accesslog", ".csv"));
         List<String[]> logEntries = logFileToList(logFilePreparedForReading);
         return Flux.fromStream(logEntries.stream().map(entry -> Arrays.copyOfRange(entry, 1, 3)));
     }

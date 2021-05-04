@@ -1,0 +1,18 @@
+body {
+    display: flex;
+}
+
+#cyCanvas {
+    height: 95vh;
+    width: 80%;
+    min-width: 600px;
+    background-color: #eee;
+    margin-right: 10px;
+}
+
+#informationContainer {
+    height: 200px;
+    width: 20%;
+    min-width: 300px;
+    background-color: #ccc;
+}
