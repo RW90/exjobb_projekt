@@ -1,7 +1,6 @@
 package com.github.rw90.exjobb.MapApp.integration;
 
 import com.github.rw90.exjobb.MapApp.model.AccessLogLine;
-import com.opencsv.exceptions.CsvException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import reactor.core.publisher.Flux;
@@ -15,7 +14,7 @@ public class AccessLogParser {
     private static final int SERVICE_NAME_FIELD = 1;
     private static final int HTTP_METHOD_FIELD = 0;
 
-    public static Flux<AccessLogLine> accessLogLineFlux(AccessLogFileReader reader) throws IOException {
+    public static Flux<AccessLogLine> accessLogLineFlux(CsvLogFileReader reader) throws IOException {
         return reader
                 .readAllLines()
                 .map(logEntry -> logEntryToAccessLogLine(logEntry));
