@@ -12,7 +12,7 @@ import java.nio.file.Path;
 @Service
 public class AccessLogService {
 
-    private final String PATH_TO_ACCESS_LOG_FILE = "src/main/resources/accesslogs.csv";
+    private final String PATH_TO_ACCESS_LOG_FILE = "src/main/resources/logs/accesslogs.csv";
 
     public Flux<AccessLogLine> getAccessLogLines() throws IOException {
         AccessLogFileReader reader = new AccessLogFileReader(Path.of(PATH_TO_ACCESS_LOG_FILE));
