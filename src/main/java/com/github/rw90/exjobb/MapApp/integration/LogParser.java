@@ -11,11 +11,9 @@ import java.io.IOException;
 public interface LogParser<T> {
 
     /**
-     * Takes a CsvLogFileReader and reads the underlying .csv log file. Returns a Flux
-     * of the entries in the log file.
-     * @param reader The CsvLogFileReader used to read a log file
-     * @return A Flux of the lines in the log file
+     * Parses logs from any underlying source and returns a Flux.
+     * @return A Flux of the lines in the underlying logs
      * @throws IOException
      */
-    Flux<T> logLinesFlux(CsvLogFileReader reader) throws IOException;
+    Flux<T> parseLines() throws IOException;
 }

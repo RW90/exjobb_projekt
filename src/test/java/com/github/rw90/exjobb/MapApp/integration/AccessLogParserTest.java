@@ -20,7 +20,7 @@ import java.util.UUID;
 class AccessLogParserTest {
 
     private AccessLogParser parser;
-    private CsvLogFileReader reader;
+    private LogFileReader reader;
     private Path tempFile;
 
     @BeforeEach
@@ -34,8 +34,8 @@ class AccessLogParserTest {
 
         tempFile = Files.createTempFile("testLogs", ".csv");
         Files.write(tempFile, lines);
-        parser = new AccessLogParser();
         reader = new AccessLogFileReader(new FileReverserImpl(), tempFile);
+        parser = new AccessLogParser(reader);
     }
 
     @AfterEach
@@ -46,14 +46,14 @@ class AccessLogParserTest {
     @Test
     @DisplayName("should return all lines except headers")
     void allLines() throws IOException {
-        Flux<AccessLogLine> lines = parser.logLinesFlux(reader);
+        Flux<AccessLogLine> lines = parser.parseLines();
         StepVerifier.create(lines).expectNextCount(3).verifyComplete();
     }
 
     @Test
     @DisplayName("should parse line")
     void correctParsing() throws IOException {
-        Flux<AccessLogLine> lines = parser.logLinesFlux(reader);
+        Flux<AccessLogLine> lines = parser.parseLines();
         AccessLogLine expected = new AccessLogLine(HttpMethod.POST, "/calculate", "calculate", UUID.fromString("525891db-d583-4dfa-87ca-9500f8da0192"));
         StepVerifier.create(lines).expectNext(expected).thenCancel().verify();
     }
@@ -61,7 +61,7 @@ class AccessLogParserTest {
     @Test
     @DisplayName("should not include request params when parsing")
     void correctParsing2() throws IOException {
-        Flux<AccessLogLine> lines = parser.logLinesFlux(reader);
+        Flux<AccessLogLine> lines = parser.parseLines();
         AccessLogLine expected = new AccessLogLine(HttpMethod.GET, "/adress", "adress", UUID.fromString("0aecdb60-0338-49b4-ac36-f5fd871ef7c2"));
         StepVerifier.create(lines).expectNextCount(2).expectNext(expected).thenCancel().verify();
     }
@@ -69,7 +69,7 @@ class AccessLogParserTest {
     @Test
     @DisplayName("should parse both types of formatted log messages")
     void correctParsing3() throws IOException {
-        Flux<AccessLogLine> lines = parser.logLinesFlux(reader);
+        Flux<AccessLogLine> lines = parser.parseLines();
         AccessLogLine expected = new AccessLogLine(HttpMethod.POST, "/startpoint2", "adress-gw", null);
         StepVerifier.create(lines).expectNextCount(1).expectNext(expected).thenCancel().verify();
     }
