@@ -2,7 +2,6 @@ package com.github.rw90.exjobb.MapApp.controller;
 
 import com.github.rw90.exjobb.MapApp.model.SystemOverview;
 import com.github.rw90.exjobb.MapApp.service.SystemOverviewService;
-import com.opencsv.exceptions.CsvException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
