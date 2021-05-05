@@ -1,6 +1,5 @@
 package com.github.rw90.exjobb.MapApp.integration;
 
-import com.github.rw90.exjobb.MapApp.util.FileReverserImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +29,7 @@ class AccessLogFileReaderTest {
 
         tempFile = Files.createTempFile("testLogs", ".csv");
         Files.write(tempFile, lines);
-        reader = new AccessLogFileReader(new FileReverserImpl(), tempFile);
+        reader = new AccessLogFileReader(tempFile);
     }
 
     @AfterEach
