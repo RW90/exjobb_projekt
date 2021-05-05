@@ -2,15 +2,14 @@ body {
     display: flex;
 }
 
-#cyCanvas {
+#map-view {
     height: 95vh;
     width: 80%;
-    min-width: 600px;
     background-color: #eee;
     margin-right: 10px;
 }
 
-#informationContainer {
+#info-view {
     height: 200px;
     width: 20%;
     min-width: 300px;
