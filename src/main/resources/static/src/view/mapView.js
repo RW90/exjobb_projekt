@@ -1,5 +1,3 @@
-import Events from "../model/events.js";
-
 /**
  * View that renders the map. The view is an observer.
  */
@@ -12,11 +10,11 @@ class MapView {
      */
     constructor(container, model) {
         this.container = container;
+        model.addObserver(this);
         this.map = cytoscape({
             elements: this.transformOverviewToCytoscapeObjects(model.getSystemOverview()),
             style: styleConfiguration, // see bottom of file
         }); // this is the created map / runtime model / overview of the system
-        model.addObserver(this);
     }
 
     /**
@@ -39,15 +37,8 @@ class MapView {
         }).run();
     }
 
-    // TODO: move this to InfoView
+    // TODO: should be used for update events from server
     update(event, payload) {
-        if (event === Events.SERVICE_SELECTED) {
-            console.log(payload);
-        }
-
-        if (event == Events.SERVICE_UNSELECTED) {
-            console.log(payload);
-        }
     }
 
     /**

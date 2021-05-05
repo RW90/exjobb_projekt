@@ -12,6 +12,14 @@ class Endpoint {
         this.method = method;
         this.path = path;
     }
+
+    getMethod() {
+        return this.method;
+    }
+
+    getPath() {
+        return this.path;
+    }
 }
 
 export default Endpoint;

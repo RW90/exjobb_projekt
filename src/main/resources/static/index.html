@@ -7,10 +7,7 @@
 </head>
 <body>
 <div id="map-view"></div>
-<div id="informationContainer">
-    <p id="infoName"></p>
-    <ul id="infoEndpoints"></ul>
-</div>
+<div id="info-view"></div>
 <!-- external scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"></script>
 
@@ -24,10 +21,12 @@
 
 <!-- view -->
 <script src="src/view/mapView.js" type="module"></script>
+<script src="src/view/infoView.js" type="module"></script>
 
 <!-- controller -->
 <script src="src/controller/apiController.js" type="module"></script>
 <script src="src/controller/mapController.js" type="module"></script>
+<script src="src/controller/infoController.js" type="module"></script>
 
 <!-- startup -->
 <script src="app.js" type="module"></script>
