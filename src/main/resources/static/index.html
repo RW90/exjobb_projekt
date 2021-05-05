@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>MapApp</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="src/resources/styles.css" />
 </head>
 <body>
-<div id="cyCanvas"></div>
+<div id="map-view"></div>
 <div id="informationContainer">
     <p id="infoName"></p>
     <ul id="infoEndpoints"></ul>
@@ -14,6 +14,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"></script>
 <!--<script src="https://unpkg.com/webcola/WebCola/cola.min.js"></script>-->
 <!--<script src="https://cdn.jsdelivr.net/npm/cytoscape-cola@2.2.3/cytoscape-cola.min.js"></script>-->
-<script src="main.js" type="module"></script>
+<script src="src/model/dependency.js" type="module"></script>
+<script src="src/model/endpoint.js" type="module"></script>
+<script src="src/model/microservice.js" type="module"></script>
+<script src="src/model/systemOverview.js" type="module"></script>
+<script src="src/model/systemModel.js" type="module"></script>
+<script src="src/view/mapView.js" type="module"></script>
+<script src="src/controller/apiController.js" type="module"></script>
+<script src="src/controller/mapController.js" type="module"></script>
+<script src="app.js" type="module"></script>
 </body>
 </html>

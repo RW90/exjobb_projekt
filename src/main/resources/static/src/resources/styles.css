@@ -2,10 +2,9 @@ body {
     display: flex;
 }
 
-#cyCanvas {
+#map-view {
     height: 95vh;
     width: 80%;
-    min-width: 600px;
     background-color: #eee;
     margin-right: 10px;
 }
