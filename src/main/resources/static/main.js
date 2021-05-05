@@ -17,6 +17,22 @@ class SystemOverview {
 		this.services = services;
 		this.dependencies = dependencies;
 	}
+
+	/**
+	 * Static factory to create an instance from a snapshot from the API.
+	 * @param snapshot A snapshot from the API containing services and dependencies
+	 * @returns {SystemOverview} An instance of SystemOverview
+	 */
+	static fromApiSnapshot(snapshot) {
+		// helper to map endpoints in snapshot to instances of Endpoint
+		const extractEndpoints = (endpoints) => endpoints.map(endpoint => new Endpoint(endpoint.method, endpoint.path));
+
+		let services = snapshot.services
+			.map(({name, endpoints}) => new Microservice(name, extractEndpoints(endpoints)));
+
+		let dependencies = [];
+		return new SystemOverview(services, dependencies);
+	}
 }
 
 /**
@@ -26,11 +42,11 @@ class Microservice {
 
 	/**
 	 * Creates a new instance.
-	 * @param id Identifier for the microservice
+	 * @param name Identifier for the microservice
 	 * @param endpoints Array of Endpoint instances
 	 */
-	constructor(id, endpoints) {
-		this.id = id;
+	constructor(name, endpoints) {
+		this.name = name;
 		this.endpoints = endpoints;
 		this.classes = ["ms"];
 		this.selectable = false;
@@ -91,6 +107,10 @@ function clearDisplayedServiceInfo() {
 	endpointsContainer.innerHTML = "";
 }
 
+loadSystem().then(snap => {
+	let overview = SystemOverview.fromApiSnapshot(snap);
+	console.log(overview);
+});
 loadSystem().then(drawSystem);
 
 function systemToDrawableData(system) {
