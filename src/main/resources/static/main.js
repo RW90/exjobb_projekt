@@ -3,6 +3,74 @@ let nameContainer = informationContainer.firstElementChild;
 let endpointsContainer =
 	informationContainer.firstElementChild.nextElementSibling;
 
+/**
+ * Represents a map / runtime model / runtime architecture of the system.
+ */
+class SystemOverview {
+
+	/**
+	 * Creates a new instance.
+	 * @param services Array of Microservice instances
+	 * @param dependencies Array of Dependency instances
+	 */
+	constructor(services, dependencies) {
+		this.services = services;
+		this.dependencies = dependencies;
+	}
+}
+
+/**
+ * Represents a microservice
+ */
+class Microservice {
+
+	/**
+	 * Creates a new instance.
+	 * @param id Identifier for the microservice
+	 * @param endpoints Array of Endpoint instances
+	 */
+	constructor(id, endpoints) {
+		this.id = id;
+		this.endpoints = endpoints;
+		this.classes = ["ms"];
+		this.selectable = false;
+	}
+}
+
+/**
+ * Represents an endpoint.
+ */
+class Endpoint {
+
+	/**
+	 * Creates a new instance.
+	 * @param method HTTP Method for the endpoint
+	 * @param path Path of the endpoint
+	 */
+	constructor(method, path) {
+		this.method = method;
+		this.path = path;
+	}
+}
+
+/**
+ * Represents a dependency between two Microservice instances.
+ */
+class Dependency {
+
+	/**
+	 * Creates a new instance.
+	 * @param id A unique identifier for the dependency.
+	 * @param source The microservice instance that is dependent on another
+	 * @param target The microservice instance depended on by the source
+	 */
+	constructor(id, source, target) {
+		this.id = id;
+		this.source = source;
+		this.target = target;
+	}
+}
+
 async function loadSystem() {
 	const system = await fetch("/system");
 	return await system.json();
