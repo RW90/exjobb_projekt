@@ -14,6 +14,14 @@ class Microservice {
         this.classes = ["ms"];
         this.selectable = false;
     }
+
+    getName() {
+        return this.name;
+    }
+
+    getEndpoints() {
+        return this.endpoints;
+    }
 }
 
 export default Microservice;

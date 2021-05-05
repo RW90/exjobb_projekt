@@ -11,7 +11,7 @@ class SystemOverview {
      * @param services Array of Microservice instances
      * @param dependencies Array of Dependency instances
      */
-    constructor(services, dependencies) {
+    constructor(services = [], dependencies = []) {
         this.services = services;
         this.dependencies = dependencies;
     }
@@ -25,11 +25,23 @@ class SystemOverview {
         // helper to map endpoints in snapshot to instances of Endpoint
         const extractEndpoints = (endpoints) => endpoints.map(endpoint => new Endpoint(endpoint.method, endpoint.path));
 
-        let services = snapshot.services
+        const services = snapshot.services
             .map(({name, endpoints}) => new Microservice(name, extractEndpoints(endpoints)));
 
-        let dependencies = [];
+        const dependencies = [];
         return new SystemOverview(services, dependencies);
+    }
+
+    getServices() {
+        return this.services;
+    }
+
+    getDependencies() {
+        return this.dependencies;
+    }
+
+    getServiceByName(name) {
+        return this.services.find(service => service.name === name);
     }
 }
 
