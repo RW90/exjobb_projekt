@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Utility interface to revert the ordering of lines in text files.
+ * Utility class to revert the ordering of lines in text files.
  */
-public interface FileReverser {
+public class FileReverser {
+
+    private FileReverser() {}
 
     /**
      * Takes a text file and creates a new file where the lines of the initial text file is reverted.
@@ -20,7 +22,7 @@ public interface FileReverser {
      * @return Path to where the reversed lines are written
      * @throws IOException
      */
-    default Path reverseLinesInFile(Path fileToRevert, Path newFile, int linesToSkip) throws IOException {
+    public static Path reverseLinesInFile(Path fileToRevert, Path newFile, int linesToSkip) throws IOException {
         List<String> linesInFile = Files
                 .lines(fileToRevert)
                 .skip(linesToSkip)

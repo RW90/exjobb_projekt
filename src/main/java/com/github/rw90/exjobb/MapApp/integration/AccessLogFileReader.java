@@ -28,16 +28,13 @@ public class AccessLogFileReader implements LogFileReader {
     private final int MESSAGE_FIELD = 1;
     private final int SERVICE_NAME_FIELD = 3;
 
-    private final FileReverser fileReverser;
     private final Path pathToLogFile;
 
     /**
      * Creates an instance.
-     * @param fileReverser A FileReverser
      * @param pathToAccessLogFile Path to the access log file that should be read
      */
-    public AccessLogFileReader(FileReverser fileReverser, @Qualifier("accessLogPath") Path pathToAccessLogFile) {
-        this.fileReverser = fileReverser;
+    public AccessLogFileReader(@Qualifier("accessLogPath") Path pathToAccessLogFile) {
         this.pathToLogFile = pathToAccessLogFile;
     }
 
@@ -52,7 +49,7 @@ public class AccessLogFileReader implements LogFileReader {
     @Override
     public Flux<String[]> readAllLines() throws IOException {
         Path csvTempFile = Files.createTempFile("accesslogs", ".csv");
-        Path reversedCsvTempFile = fileReverser.reverseLinesInFile(pathToLogFile, csvTempFile, HEADER_LINE);
+        Path reversedCsvTempFile = FileReverser.reverseLinesInFile(pathToLogFile, csvTempFile, HEADER_LINE);
 
         Stream<String[]> logEntries = csvLogFileToStream(reversedCsvTempFile);
 
