@@ -15,7 +15,7 @@ import java.util.List;
 
 class AccessLogFileReaderTest {
 
-    private LogFileReader reader;
+    private LogFileReader<String[]> reader;
     private Path tempFile;
 
     @BeforeEach

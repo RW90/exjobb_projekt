@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ServiceLogFileReader implements LogFileReader {
+public class ServiceLogFileReader implements LogFileReader<String> {
 
     private final int HEADER_LINE = 1;
     private final int MESSAGE_FIELD = 1;
@@ -25,16 +25,16 @@ public class ServiceLogFileReader implements LogFileReader {
     }
 
     @Override
-    public Flux<String[]> readAllLines() throws IOException {
+    public Flux<String> readAllLines() throws IOException {
         Path csvTempFile = Files.createTempFile("servicelogs", ".csv");
         Path reversedCsvTempFile = FileReverser.reverseLinesInFile(pathToLogFile, csvTempFile, HEADER_LINE);
 
-        Stream<String[]> logEntries = csvLogFileToStream(reversedCsvTempFile);
+        Stream<String> logEntries = csvLogFileToStream(reversedCsvTempFile);
 
         return Flux.fromStream(logEntries);
     }
 
-    private Stream<String[]> csvLogFileToStream(Path pathToFile) throws IOException {
+    private Stream<String> csvLogFileToStream(Path pathToFile) throws IOException {
         CSVReader reader = new CSVReader(new FileReader(pathToFile.toFile()));
         List<String[]> logEntries;
 
@@ -45,6 +45,6 @@ public class ServiceLogFileReader implements LogFileReader {
         }
 
         return logEntries.stream()
-                .map(entry -> new String[] {entry[MESSAGE_FIELD]});
+                .map(entry -> entry[MESSAGE_FIELD]);
     }
 }

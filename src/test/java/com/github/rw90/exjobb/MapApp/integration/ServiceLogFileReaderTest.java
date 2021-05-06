@@ -15,7 +15,7 @@ import java.util.List;
 
 class ServiceLogFileReaderTest {
 
-    private ServiceLogFileReader reader;
+    private LogFileReader<String> reader;
     private Path tempFile;
 
     @BeforeEach
@@ -40,7 +40,7 @@ class ServiceLogFileReaderTest {
     @Test
     @DisplayName("should ignore headers")
     void ignoreHeaders() throws IOException {
-        Flux<String[]> lines = reader.readAllLines();
+        Flux<String> lines = reader.readAllLines();
         StepVerifier
                 .create(lines)
                 .expectNextCount(3)
