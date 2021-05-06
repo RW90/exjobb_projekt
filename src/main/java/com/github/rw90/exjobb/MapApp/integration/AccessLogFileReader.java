@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * service name. It is also assumed that the oldest log entries are at the bottom of the file.
  */
 @Component
-public class AccessLogFileReader implements LogFileReader {
+public class AccessLogFileReader implements LogFileReader<String[]> {
 
     private final int HEADER_LINE = 1;
     private final int MESSAGE_FIELD = 1;

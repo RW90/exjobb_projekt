@@ -17,4 +17,9 @@ public class PathConfiguration {
     public Path getAccessLogFilePath(@Value("${logs.access}") String pathToAccessLogFile) {
         return Paths.get(pathToAccessLogFile);
     }
+
+    @Bean("serviceLogPath")
+    public Path getServiceLogFilePath(@Value("${logs.service}") String pathToServiceLogFile) {
+        return Paths.get(pathToServiceLogFile);
+    }
 }
