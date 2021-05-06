@@ -26,17 +26,21 @@ class MapController {
      * Adds event listeners to relevant elements in the view.
      */
     addEventListeners() {
-        this.view.getMap().nodes(".ms").on("mouseover", (event) => {
-            event.stopPropagation();
-            this.model.selectService(event.target._private.data.id);
-            event.target.addClass("msSelected");
-        });
+        this.view.getMap()
+            .getNodes(".ms")
+            .on("mouseover", (event) => {
+                event.stopPropagation();
+                this.model.selectService(event.target._private.data.id);
+                event.target.addClass("msSelected");
+            });
 
-        this.view.getMap().nodes(".ms").on("mouseout", (event) => {
-            event.stopPropagation();
-            this.model.unselectService(event.target._private.data.id);
-            event.target.removeClass("msSelected");
-        });
+        this.view.getMap()
+            .getNodes(".ms")
+            .on("mouseout", (event) => {
+                event.stopPropagation();
+                this.model.unselectService(event.target._private.data.id);
+                event.target.removeClass("msSelected");
+            });
     }
 }
 
