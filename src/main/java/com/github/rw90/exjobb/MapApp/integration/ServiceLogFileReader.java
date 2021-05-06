@@ -4,6 +4,7 @@ import com.github.rw90.exjobb.MapApp.util.FileReverser;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.io.FileReader;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Component
 public class ServiceLogFileReader implements LogFileReader<String> {
 
     private final int HEADER_LINE = 1;
