@@ -13,7 +13,9 @@ class StatusController {
     }
 
     addEventListeners() {
-
+        this.view.refreshButton.addEventListener("click", (event) => {
+            this.model.refreshMap();
+        });
     }
 }
 

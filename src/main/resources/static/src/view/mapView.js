@@ -26,7 +26,7 @@ class MapView {
 
     // TODO: should be used for update events from server
     update(event, payload) {
-        if (event == Events.MAP_UPDATE) { // in this case, payload is an instance of SystemOverview
+        if (event == Events.MAP_REFRESH) { // in this case, payload is an instance of SystemOverview
             this.map.update(payload);
             this.container.dispatchEvent(new CustomEvent(Events.MAP_RERENDERED));
         }

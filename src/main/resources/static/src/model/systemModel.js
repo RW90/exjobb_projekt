@@ -1,4 +1,5 @@
 import Events from "./events.js";
+import SystemOverview from "./systemOverview.js";
 
 /**
  * Model for the application. The model is observable.
@@ -15,15 +16,15 @@ class SystemModel {
         this.preFetchedPlainOverview = null;
     }
 
+    refreshMap() {
+        this.systemOverview = SystemOverview.fromPlainOverview(this.preFetchedPlainOverview);
+        this.preFetchedPlainOverview = null;
+        this.notifyObservers(Events.MAP_REFRESH, this.systemOverview);
+    }
+
     setPrefetchedOverview(overview, change) {
         this.preFetchedPlainOverview = overview;
-        console.log(change);
         this.notifyObservers(Events.CHANGE_INCOMING, change);
-
-        // this should be done on another event
-        // TODO: move to statusViewController
-        /*this.systemOverview = SystemOverview.fromPlainOverview(this.preFetchedPlainOverview);
-        this.notifyObservers(Events.MAP_UPDATE, this.systemOverview);*/
     }
 
     selectService(serviceName) {

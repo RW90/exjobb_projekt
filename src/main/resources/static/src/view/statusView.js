@@ -23,6 +23,11 @@ class StatusView {
             this.statusMessage.innerText = "The system overview has changed";
             this.container.appendChild(this.refreshButton);
         }
+
+        if(event == Events.MAP_REFRESH) {
+            this.statusMessage.innerText = "Map shows the latest snapshot of the system overview";
+            this.refreshButton.remove();
+        }
     }
 
 }
