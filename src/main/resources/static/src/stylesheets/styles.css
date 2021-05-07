@@ -1,9 +1,14 @@
 body {
     display: flex;
+    flex-direction: column;
+}
+
+#middle {
+    display: flex;
 }
 
 #map-view {
-    height: 95vh;
+    height: 70vh;
     width: 80%;
     background-color: #eee;
     margin-right: 10px;
@@ -14,4 +19,9 @@ body {
     width: 20%;
     min-width: 300px;
     background-color: #ccc;
+}
+
+#status-view {
+    display: flex;
+    justify-content: space-between;
 }

@@ -12,6 +12,10 @@ public class ApiEndpoint {
         this.path = path;
     }
 
+    public static ApiEndpoint copyOf(ApiEndpoint endpoint) {
+        return new ApiEndpoint(HttpMethod.resolve(endpoint.getMethod().name()), endpoint.getPath());
+    }
+
     public HttpMethod getMethod() {
         return method;
     }
@@ -36,5 +40,10 @@ public class ApiEndpoint {
         int result = method.hashCode();
         result = 31 * result + path.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return method + " " + path;
     }
 }

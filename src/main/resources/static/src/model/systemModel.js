@@ -1,4 +1,5 @@
 import Events from "./events.js";
+import SystemOverview from "./systemOverview.js";
 
 /**
  * Model for the application. The model is observable.
@@ -12,6 +13,18 @@ class SystemModel {
     constructor(systemOverview) {
         this.systemOverview = systemOverview;
         this.observers = [];
+        this.preFetchedPlainOverview = null;
+    }
+
+    refreshMap() {
+        this.systemOverview = SystemOverview.fromPlainOverview(this.preFetchedPlainOverview);
+        this.preFetchedPlainOverview = null;
+        this.notifyObservers(Events.MAP_REFRESH, this.systemOverview);
+    }
+
+    setPrefetchedOverview(overview, change) {
+        this.preFetchedPlainOverview = overview;
+        this.notifyObservers(Events.CHANGE_INCOMING, change);
     }
 
     selectService(serviceName) {
@@ -37,10 +50,6 @@ class SystemModel {
 
     notifyObservers(event, payload) {
         this.observers.forEach(observer => observer.update(event, payload));
-    }
-
-    removeObserver(observerToRemove) {
-        this.observers = this.observers.filter(observer !== observerToRemove);
     }
 }
 
