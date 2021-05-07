@@ -4,6 +4,7 @@ import MapView from './src/view/mapView.js';
 import InfoView from "./src/view/infoView.js";
 import MapController from './src/controller/mapController.js';
 import InfoController from "./src/controller/infoController.js";
+import ApiController from "./src/controller/apiController.js";
 import {DUMMY_SNAPSHOT_URL} from "./src/ui.properties.js";
 
 /**
@@ -36,7 +37,7 @@ async function startup() {
 	const mapView = new MapView(getContainer("map"), model);
 	const infoView = new InfoView(getContainer("info"), model);
 
-	//const apiController = new ApiController(model); TODO: implement this
+	const apiController = new ApiController(model);
 	new MapController(model, mapView);
 	new InfoController(model, infoView);
 

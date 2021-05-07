@@ -1,4 +1,5 @@
 import Graph from '../model/graph.js';
+import Events from "../model/events.js";
 
 /**
  * View that renders the map. The view is an observer.
@@ -25,6 +26,9 @@ class MapView {
 
     // TODO: should be used for update events from server
     update(event, payload) {
+        if (event == Events.MAP_UPDATED) {
+            this.map.update(payload);
+        }
     }
 
     getMap() {

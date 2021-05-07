@@ -52,6 +52,12 @@ class Graph {
         this.runLayout();
     }
 
+    update(systemOverview) {
+        this.cy.removeData();
+        this.cy.add(Graph.transformOverviewToCytoscapeObjects(systemOverview));
+        this.runLayout();
+    }
+
     /**
      * Get all nodes with a specific CSS-selector.
      * @param selector

@@ -1,4 +1,5 @@
 import Events from "./events.js";
+import SystemOverview from "./systemOverview.js";
 
 /**
  * Model for the application. The model is observable.
@@ -12,6 +13,13 @@ class SystemModel {
     constructor(systemOverview) {
         this.systemOverview = systemOverview;
         this.observers = [];
+        this.preFetchedOverview = null;
+    }
+
+    setPrefetchedOverview(overview) {
+        this.preFetchedOverview = overview;
+        this.systemOverview = SystemOverview.fromApiSnapshot(this.preFetchedOverview);
+        this.notifyObservers(Events.MAP_UPDATED, this.systemOverview);
     }
 
     selectService(serviceName) {

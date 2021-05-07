@@ -21,6 +21,6 @@ public class StreamController {
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<SystemOverviewWrapper> getStream() throws IOException {
-        return service.getStream().delayElements(Duration.ofSeconds(1));
+        return service.getStream().delayElements(Duration.ofSeconds(3));
     }
 }
