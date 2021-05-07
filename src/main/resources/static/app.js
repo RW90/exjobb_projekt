@@ -4,6 +4,7 @@ import MapView from './src/view/mapView.js';
 import InfoView from "./src/view/infoView.js";
 import MapController from './src/controller/mapController.js';
 import InfoController from "./src/controller/infoController.js";
+import {DUMMY_SNAPSHOT_URL} from "./src/ui.properties.js";
 
 /**
  * Helper to fetch a containers for views, from the DOM.
@@ -19,7 +20,7 @@ function getContainer(viewName) {
  * @returns {Promise<any>} A promise that will be resolved to the server response body.
  */
 async function fetchSnapshotFromApi() {
-	const snapshot = await fetch("/system");
+	const snapshot = await fetch(DUMMY_SNAPSHOT_URL);
 	return await snapshot.json();
 }
 
@@ -30,7 +31,7 @@ async function fetchSnapshotFromApi() {
 async function startup() {
 
 	const snapshot = await fetchSnapshotFromApi();
-	const model = new SystemModel(SystemOverview.fromApiSnapshot(snapshot));
+	const model = new SystemModel(SystemOverview.fromApiSnapshot(snapshot.systemOverview));
 
 	const mapView = new MapView(getContainer("map"), model);
 	const infoView = new InfoView(getContainer("info"), model);

@@ -1,6 +1,7 @@
 package com.github.rw90.exjobb.MapApp.controller;
 
 import com.github.rw90.exjobb.MapApp.integration.repository.SystemOverviewRepository;
+import com.github.rw90.exjobb.MapApp.model.SystemOverview;
 import com.github.rw90.exjobb.MapApp.model.SystemOverviewWrapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,5 +33,10 @@ public class SnapshotController {
     @GetMapping("/snapshot/{id}")
     public Mono<SystemOverviewWrapper> getSnapshotById(@PathVariable String id) {
         return repository.findById(UUID.fromString(id));
+    }
+
+    @GetMapping("/snapshot/dummy")
+    public Mono<SystemOverviewWrapper> getDummySnapshot() {
+        return Mono.just(new SystemOverviewWrapper(new SystemOverview()));
     }
 }
