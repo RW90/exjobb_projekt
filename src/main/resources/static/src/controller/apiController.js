@@ -15,7 +15,12 @@ class ApiController {
     addEventListeners() {
         this.api.onmessage = async (event) => {
             let data = await JSON.parse(event.data);
-            this.model.setPrefetchedOverview(data.systemOverview);
+            if (data.latestChange === "endofstream") {
+                this.api.close();
+                console.log("endofstream")
+                return;
+            }
+            this.model.setPrefetchedOverview(data.systemOverview, data.latestChange);
         }
     }
 }

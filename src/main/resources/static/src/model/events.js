@@ -1,8 +1,9 @@
 const Events = {
     SERVICE_SELECTED: "service-selected",
     SERVICE_UNSELECTED: "service-unselected",
-    MAP_REFRESH: "map-refresh",
-    MAP_RERENDERED: "map-rerendered"
+    MAP_UPDATE: "map-update",
+    MAP_RERENDERED: "map-rerendered",
+    CHANGE_INCOMING: "change-incoming"
 }
 
 export default Events;

@@ -6,8 +6,11 @@
     <link rel="stylesheet" href="src/stylesheets/styles.css" />
 </head>
 <body>
-<div id="map-view"></div>
-<div id="info-view"></div>
+<div id="status-view"></div>
+<div id="middle">
+    <div id="map-view"></div>
+    <div id="info-view"></div>
+</div>
 <!-- external scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.18.2/cytoscape.min.js"></script>
 
@@ -23,11 +26,13 @@
 <!-- view -->
 <script src="src/view/mapView.js" type="module"></script>
 <script src="src/view/infoView.js" type="module"></script>
+<script src="src/view/statusView.js" type="module"></script>
 
 <!-- controller -->
 <script src="src/controller/apiController.js" type="module"></script>
 <script src="src/controller/mapController.js" type="module"></script>
 <script src="src/controller/infoController.js" type="module"></script>
+<script src="src/controller/statusController.js" type="module"></script>
 
 <!-- startup -->
 <script src="app.js" type="module"></script>
