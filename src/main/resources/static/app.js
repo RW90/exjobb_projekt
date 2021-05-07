@@ -7,6 +7,7 @@ import InfoController from "./src/controller/infoController.js";
 import ApiController from "./src/controller/apiController.js";
 import StatusController from "./src/controller/statusController.js";
 import StatusView from "./src/view/statusView.js";
+import LogView from "./src/view/logView.js";
 
 import {DUMMY_SNAPSHOT_URL} from "./src/ui.properties.js";
 
@@ -40,6 +41,7 @@ async function startup() {
 	const mapView = new MapView(getContainer("map"), model);
 	const infoView = new InfoView(getContainer("info"), model);
 	const statusView = new StatusView(getContainer("status"), model);
+	new LogView(getContainer("log"), model);
 
 	new ApiController(model);
 	new MapController(model, mapView);

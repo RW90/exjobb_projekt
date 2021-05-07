@@ -50,10 +50,6 @@ class SystemModel {
     notifyObservers(event, payload) {
         this.observers.forEach(observer => observer.update(event, payload));
     }
-
-    removeObserver(observerToRemove) {
-        this.observers = this.observers.filter(observer !== observerToRemove);
-    }
 }
 
 export default SystemModel;
