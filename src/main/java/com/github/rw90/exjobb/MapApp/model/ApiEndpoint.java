@@ -41,4 +41,9 @@ public class ApiEndpoint {
         result = 31 * result + path.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return method + " " + path;
+    }
 }

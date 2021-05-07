@@ -16,6 +16,43 @@ public class SystemOverviewService {
     private final SystemOverviewRepository systemOverviewRepository;
     private final AccessLogService service;
 
+    public SystemOverviewService(AccessLogService service, SystemOverviewRepository systemOverviewRepository) {
+        this.service = service;
+        this.systemOverviewRepository = systemOverviewRepository;
+    }
+
+    public Flux<SystemOverviewWrapper> getStream() throws IOException {
+        SystemOverview system = new SystemOverview();
+        return service.getAccessLogLines()
+                .flatMap(logLine -> detectNewMicroservice(system, logLine))
+                .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
+                .filter(wrapper -> wrapper.eventHasOccured == true)
+                .flatMap(this::saveAndReturn);
+    }
+
+    private Flux<ChangeEventWrapper> detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
+        ChangeEventWrapper wrapper = new ChangeEventWrapper(logLine);
+        if (system.addService(new Microservice(logLine.getServiceName()))) {
+            wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "New microservice: " + logLine.getServiceName()));
+        }
+        return Flux.just(wrapper);
+    }
+
+    private Flux<ChangeEventWrapper> detectNewEndpoint(SystemOverview system, ChangeEventWrapper wrapper) {
+        Microservice service = system.getServiceByName(wrapper.logLine.getServiceName());
+        if (service.addEndpoint(new ApiEndpoint(wrapper.logLine.getMethod(), wrapper.logLine.getEndpoint()))) {
+            wrapper.addOverview(
+                    new SystemOverviewWrapper(
+                            new SystemOverview(system), "New endpoint on " + wrapper.logLine.getServiceName() + ": " + wrapper.logLine.getMethod() + " " + wrapper.logLine.getEndpoint()));
+        }
+        return Flux.just(wrapper);
+    }
+
+    private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
+        wrapper.getOverviews().forEach(overview -> systemOverviewRepository.save(overview).subscribe());
+        return Flux.fromStream(wrapper.getOverviews());
+    }
+
     private class ChangeEventWrapper {
         private AccessLogLine logLine;
         private List<SystemOverviewWrapper> overviews;
@@ -34,40 +71,5 @@ public class SystemOverviewService {
             overviews.add(overview);
             eventHasOccured = true;
         }
-    }
-
-    public SystemOverviewService(AccessLogService service, SystemOverviewRepository systemOverviewRepository) {
-        this.service = service;
-        this.systemOverviewRepository = systemOverviewRepository;
-    }
-
-    public Flux<SystemOverviewWrapper> getStream() throws IOException {
-        SystemOverview system = new SystemOverview();
-        return service.getAccessLogLines()
-                .flatMap(logLine -> detectNewMicroservice(system, logLine))
-                .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
-                .filter(wrapper -> wrapper.eventHasOccured == true)
-                .flatMap(this::saveAndReturn);
-    }
-
-    private Flux<ChangeEventWrapper> detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
-            ChangeEventWrapper wrapper = new ChangeEventWrapper(logLine);
-            if (system.addService(new Microservice(logLine.getServiceName()))) {
-                wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "microservice added"));
-            }
-            return Flux.just(wrapper);
-    }
-
-    private Flux<ChangeEventWrapper> detectNewEndpoint(SystemOverview system, ChangeEventWrapper wrapper) {
-        Microservice service = system.getServiceByName(wrapper.logLine.getServiceName());
-        if (service.addEndpoint(new ApiEndpoint(wrapper.logLine.getMethod(), wrapper.logLine.getEndpoint()))) {
-            wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "endpoint added"));
-        }
-        return Flux.just(wrapper);
-    }
-
-    private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
-        wrapper.getOverviews().forEach(overview -> systemOverviewRepository.save(overview).subscribe());
-        return Flux.fromStream(wrapper.getOverviews());
     }
 }
