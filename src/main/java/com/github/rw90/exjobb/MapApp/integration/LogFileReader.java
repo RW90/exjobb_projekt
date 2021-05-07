@@ -4,7 +4,7 @@ import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 
-public interface LogFileReader {
+public interface LogFileReader<T> {
 
-    public Flux<String[]> readAllLines() throws IOException;
+    Flux<T> readAllLines() throws IOException;
 }

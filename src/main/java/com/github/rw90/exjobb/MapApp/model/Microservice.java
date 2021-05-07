@@ -1,8 +1,6 @@
 package com.github.rw90.exjobb.MapApp.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Microservice {
@@ -15,8 +13,8 @@ public class Microservice {
         this.endpoints = new HashSet<>();
     }
 
-    public void addEndpoint(ApiEndpoint endpoint) {
-        endpoints.add(endpoint);
+    public boolean addEndpoint(ApiEndpoint endpoint) {
+        return endpoints.add(endpoint);
     }
 
     public Set<ApiEndpoint> getEndpoints() {

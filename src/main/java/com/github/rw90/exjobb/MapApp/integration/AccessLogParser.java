@@ -20,7 +20,7 @@ public class AccessLogParser implements LogParser<AccessLogLine> {
     private final int HTTP_METHOD_FIELD = 0;
     private final int REQUEST_PATH = 1;
     private final String UUID_PATTERN = "([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})";
-    private final LogFileReader reader;
+    private final LogFileReader<String[]> reader;
 
     public AccessLogParser(@Qualifier("accessLogFileReader") LogFileReader reader) {
         this.reader = reader;
