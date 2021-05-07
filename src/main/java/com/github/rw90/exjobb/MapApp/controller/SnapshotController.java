@@ -37,6 +37,6 @@ public class SnapshotController {
 
     @GetMapping("/snapshot/dummy")
     public Mono<SystemOverviewWrapper> getDummySnapshot() {
-        return Mono.just(new SystemOverviewWrapper(new SystemOverview()));
+        return Mono.just(new SystemOverviewWrapper(new SystemOverview(),"latest change"));
     }
 }

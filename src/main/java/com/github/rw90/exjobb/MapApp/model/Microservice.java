@@ -13,6 +13,12 @@ public class Microservice {
         this.endpoints = new HashSet<>();
     }
 
+    public static Microservice copyOf(Microservice service) {
+        Microservice copy = new Microservice(service.getName());
+        service.getEndpoints().forEach(endpoint -> copy.addEndpoint(ApiEndpoint.copyOf(endpoint)));
+        return copy;
+    }
+
     public boolean addEndpoint(ApiEndpoint endpoint) {
         return endpoints.add(endpoint);
     }

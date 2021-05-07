@@ -13,6 +13,12 @@ public class SystemOverview {
         dependencies = new HashSet<>();
     }
 
+    public SystemOverview(SystemOverview other) {
+        this.services = new HashSet<>();
+        other.getServices().forEach(service -> this.services.add(Microservice.copyOf(service)));
+        this.dependencies = new HashSet<>();
+    }
+
     public boolean addService(Microservice service) {
         return services.add(service);
     }

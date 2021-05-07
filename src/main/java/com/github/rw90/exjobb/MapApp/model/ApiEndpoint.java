@@ -12,6 +12,10 @@ public class ApiEndpoint {
         this.path = path;
     }
 
+    public static ApiEndpoint copyOf(ApiEndpoint endpoint) {
+        return new ApiEndpoint(HttpMethod.resolve(endpoint.getMethod().name()), endpoint.getPath());
+    }
+
     public HttpMethod getMethod() {
         return method;
     }
