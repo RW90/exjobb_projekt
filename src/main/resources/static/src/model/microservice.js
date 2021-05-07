@@ -22,6 +22,14 @@ class Microservice {
     getEndpoints() {
         return this.endpoints;
     }
+
+    getClasses() {
+        return this.classes;
+    }
+
+    getSelectable() {
+        return this.selectable;
+    }
 }
 
 export default Microservice;

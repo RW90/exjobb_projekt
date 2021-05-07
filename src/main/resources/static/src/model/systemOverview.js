@@ -21,8 +21,7 @@ class SystemOverview {
      * @param snapshot A snapshot from the API containing services and dependencies
      * @returns {SystemOverview} An instance of SystemOverview
      */
-    static fromApiSnapshot(snapshot) {
-        console.log(snapshot)
+    static fromPlainOverview(snapshot) {
         // helper to map endpoints in snapshot to instances of Endpoint
         const extractEndpoints = (endpoints) => endpoints.map(endpoint => new Endpoint(endpoint.method, endpoint.path));
 

@@ -11,9 +11,9 @@ class Graph {
      */
     constructor(elements) {
         this.cy = cytoscape({
-            elements: elements,
             style: styleConfiguration, // see bottom of file
         })
+        this.elements = this.cy.add(elements); // elements are used for removal etc.
     }
 
     /**
@@ -39,7 +39,8 @@ class Graph {
                     id: service.getName(),
                     endpoints: service.getEndpoints()
                 },
-                classes: ["ms"]
+                classes: service.getClasses(),
+                selectable: service.getSelectable()
             }));
     }
 
@@ -52,9 +53,13 @@ class Graph {
         this.runLayout();
     }
 
+    /**
+     *
+     * @param systemOverview An instance of SystemOverview
+     */
     update(systemOverview) {
-        this.cy.removeData();
-        this.cy.add(Graph.transformOverviewToCytoscapeObjects(systemOverview));
+        this.cy.remove(this.elements);
+        this.elements = this.cy.add(Graph.transformOverviewToCytoscapeObjects(systemOverview));
         this.runLayout();
     }
 
@@ -65,6 +70,10 @@ class Graph {
      */
     getNodes(selector) {
         return this.cy.nodes(selector);
+    }
+
+    getElements() {
+        return this.elements;
     }
 
     /**

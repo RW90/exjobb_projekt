@@ -13,13 +13,15 @@ class SystemModel {
     constructor(systemOverview) {
         this.systemOverview = systemOverview;
         this.observers = [];
-        this.preFetchedOverview = null;
+        this.preFetchedPlainOverview = null;
     }
 
     setPrefetchedOverview(overview) {
-        this.preFetchedOverview = overview;
-        this.systemOverview = SystemOverview.fromApiSnapshot(this.preFetchedOverview);
-        this.notifyObservers(Events.MAP_UPDATED, this.systemOverview);
+        this.preFetchedPlainOverview = overview;
+
+        // this should be done on another event
+        this.systemOverview = SystemOverview.fromPlainOverview(this.preFetchedPlainOverview);
+        this.notifyObservers(Events.MAP_REFRESH, this.systemOverview);
     }
 
     selectService(serviceName) {

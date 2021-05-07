@@ -31,13 +31,13 @@ async function fetchSnapshotFromApi() {
  */
 async function startup() {
 
-	const snapshot = await fetchSnapshotFromApi();
-	const model = new SystemModel(SystemOverview.fromApiSnapshot(snapshot.systemOverview));
+	const {systemOverview} = await fetchSnapshotFromApi();
+	const model = new SystemModel(SystemOverview.fromPlainOverview(systemOverview));
 
 	const mapView = new MapView(getContainer("map"), model);
 	const infoView = new InfoView(getContainer("info"), model);
 
-	const apiController = new ApiController(model);
+	new ApiController(model);
 	new MapController(model, mapView);
 	new InfoController(model, infoView);
 

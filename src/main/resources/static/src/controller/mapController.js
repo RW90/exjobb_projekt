@@ -1,3 +1,5 @@
+import Events from "../model/events.js";
+
 /**
  * Controller for MapView.
  */
@@ -26,12 +28,24 @@ class MapController {
      * Adds event listeners to relevant elements in the view.
      */
     addEventListeners() {
+        this.addHoverListeners();
+        this.view.container.addEventListener(Events.MAP_RERENDERED, (evt) => {
+            this.removeHoverListeners();
+            this.addHoverListeners();
+        });
+    }
+
+    removeHoverListeners() {
+        this.view.getMap().getElements().removeAllListeners();
+    }
+
+    addHoverListeners() {
         this.view.getMap()
             .getNodes(".ms")
             .on("mouseover", (event) => {
                 event.stopPropagation();
                 this.model.selectService(event.target._private.data.id);
-                event.target.addClass("msSelected");
+                event.target.addClass("msSelected")
             });
 
         this.view.getMap()
