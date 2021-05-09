@@ -5,7 +5,9 @@ class LogView {
     constructor(container, model) {
         this.container = container;
         this.header = document.createElement("h3");
+        this.header.classList.add("list-header");
         this.logList = document.createElement("ul");
+        this.logList.classList.add("log-list");
         model.addObserver(this);
         this.render();
     }
@@ -23,6 +25,7 @@ class LogView {
         if (event == Events.CHANGE_INCOMING) {
             let change = document.createElement("li");
             change.innerText = payload;
+            change.classList.add("list-item");
             this.logList.insertBefore(change, this.logList.firstElementChild);
         }
     }

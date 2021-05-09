@@ -23,10 +23,12 @@ public class SystemOverviewService {
 
     public Flux<SystemOverviewWrapper> getStream() throws IOException {
         SystemOverview system = new SystemOverview();
+        systemOverviewRepository.deleteAll().subscribe();
+
         return service.getAccessLogLines()
                 .flatMap(logLine -> detectNewMicroservice(system, logLine))
                 .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
-                .filter(wrapper -> wrapper.eventHasOccured == true)
+                .filter(wrapper -> wrapper.eventHasOccured)
                 .flatMap(this::saveAndReturn);
     }
 
