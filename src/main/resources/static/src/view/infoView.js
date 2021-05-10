@@ -13,7 +13,9 @@ class InfoView {
     constructor(container, model) {
         this.container = container;
         this.header = document.createElement("h3");
+        this.header.classList.add("list-header");
         this.endpoints = document.createElement("ul");
+        this.endpoints.classList.add("endpoints-list");
         model.addObserver(this);
     }
 
@@ -44,7 +46,8 @@ class InfoView {
         service.getEndpoints()
             .map(endpoint => {
                 let element = document.createElement("li");
-                element.innerText = endpoint.getPath();
+                element.classList.add("list-item");
+                element.innerText = `${endpoint.getMethod()} ${endpoint.getPath()}`;
                 return element;
             })
             .forEach(el => this.endpoints.appendChild(el));

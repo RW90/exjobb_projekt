@@ -13,11 +13,13 @@ public class SystemOverviewWrapper implements Comparable<SystemOverviewWrapper> 
     private UUID id;
     private LocalDateTime timeStamp;
     private SystemOverview systemOverview;
+    private String latestChange;
 
-    public SystemOverviewWrapper(SystemOverview systemOverview) {
+    public SystemOverviewWrapper(SystemOverview systemOverview, String latestChange) {
         this.systemOverview = systemOverview;
         this.timeStamp = LocalDateTime.now();
         this.id = UUID.randomUUID();
+        this.latestChange = latestChange;
     }
 
     public LocalDateTime getTimeStamp() {
@@ -30,6 +32,10 @@ public class SystemOverviewWrapper implements Comparable<SystemOverviewWrapper> 
 
     public UUID getId() {
         return id;
+    }
+
+    public String getLatestChange() {
+        return latestChange;
     }
 
     @Override

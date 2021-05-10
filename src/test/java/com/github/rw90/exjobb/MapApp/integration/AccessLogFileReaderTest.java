@@ -68,4 +68,14 @@ class AccessLogFileReaderTest {
                 .thenCancel()
                 .verify();
     }
+
+    @Test
+    void fluxTesting() {
+        Flux<String> testFlux = Flux.just("tomat", "gurka");
+        Flux<String> testFlux2 = Flux.just("apelsin", "äpple");
+
+        //Flux.zip(testFlux, testFlux2).subscribe(tuple -> System.out.println(tuple.getT1() + ", " + tuple.getT2()));
+
+        testFlux.flatMap(str -> Flux.just("abc", "cde")).subscribe(System.out::println);
+    }
 }

@@ -1,9 +1,15 @@
 body {
     display: flex;
+    flex-direction: column;
+    font-family: Arial, Tahoma;
+}
+
+#middle {
+    display: flex;
 }
 
 #map-view {
-    height: 95vh;
+    height: 70vh;
     width: 80%;
     background-color: #eee;
     margin-right: 10px;
@@ -14,4 +20,34 @@ body {
     width: 20%;
     min-width: 300px;
     background-color: #ccc;
+}
+
+#status-view {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 5px;
+}
+
+.endpoints-list, .log-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 10px;
+}
+
+.list-item {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.green {
+    background-color: #05c46b;
+}
+
+.red {
+    background-color: #ff5e57;
+}
+
+.list-header {
+    margin-left: 10px;
 }
