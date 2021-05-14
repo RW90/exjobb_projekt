@@ -24,7 +24,7 @@ public class StreamController {
     public Flux<SystemOverviewWrapper> getStream() throws IOException {
         return service
                 .getStream()
-                .delayElements(Duration.ofSeconds(4))
+                .delayElements(Duration.ofMillis(300))
                 .concatWith(Flux.just(new SystemOverviewWrapper(new SystemOverview(), "endofstream")));
     }
 }
