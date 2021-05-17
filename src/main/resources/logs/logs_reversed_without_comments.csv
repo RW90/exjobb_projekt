@@ -1,3 +1,4 @@
+"@timestamp",message,"kubernetes.labels.app",scenario
 "2021-05-14 15:07:38.905","2021-05-14 15:07:38,905 ipaddr - - ""DELETE /account?accountid=50 HTTP/1.1"" 200 - 45 [dc41c0c6-bc97-493d-9a77-6adc3ae4540a] ""Apache-HttpClient/4.5.10 (Java/11.0.9)""","AccountService"
 "2021-05-14 15:07:38.467","2021-05-14 15:07:38,467 ipaddr - - ""POST /account/delete HTTP/1.1"" 200 - 45 [dc41c0c6-bc97-493d-9a77-6adc3ae4540a] ""Java-SDK""","FrontService"
 "2021-05-14 15:07:38.392","2021-05-14 15:07:38,392 ipaddr - - ""PUT /account?accountid=110 HTTP/1.1"" 200 - 45 [52ffeb4b-2245-436f-b9c3-00d01c2648e0] ""Apache-HttpClient/4.5.10 (Java/11.0.9)""","AccountService"
