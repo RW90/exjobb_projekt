@@ -53,7 +53,6 @@ class Graph {
                   target: dependency.getToService()
               }
             }));
-
         return services.concat(edges);
     }
 

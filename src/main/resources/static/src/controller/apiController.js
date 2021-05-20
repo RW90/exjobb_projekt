@@ -15,6 +15,7 @@ class ApiController {
     addEventListeners() {
         this.api.onmessage = async (event) => {
             let data = await JSON.parse(event.data);
+            console.log(data.systemOverview.dependencies)
             if (data.latestChange === "endofstream") {
                 this.api.close();
                 console.log("endofstream")
