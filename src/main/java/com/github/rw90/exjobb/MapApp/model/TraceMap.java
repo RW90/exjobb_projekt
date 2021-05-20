@@ -22,7 +22,6 @@ public class TraceMap {
         Trace trace = uuidTraceMap.get(traceId);
         LocalDateTime oldTimeStamp = trace.getTimeOfLastRequest();
         trace.addService(serviceName, timestamp);
-        trace.setTimeOfLastRequest(timestamp);
         timeUUIDMap.remove(oldTimeStamp);
         timeUUIDMap.put(timestamp, traceId);
     }
@@ -47,10 +46,3 @@ public class TraceMap {
         uuidTraceMap.put(traceId, traceToAdd);
     }
 }
-
-/**
-traceMap.insertService(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
-        } else {
-        Trace traceToAdd = traceMap.getOldestTrace();
-        traceMap.addNewTrace(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
- */

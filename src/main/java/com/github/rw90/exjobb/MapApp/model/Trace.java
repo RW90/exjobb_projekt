@@ -1,10 +1,9 @@
 package com.github.rw90.exjobb.MapApp.model;
 
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Trace {
@@ -36,5 +35,23 @@ public class Trace {
 
     public List<String> getMicroservices() {
         return microservices;
+    }
+
+    public Optional<List<Dependency>> getDependencies() {
+        int nrOfMicroservices = microservices.size();
+
+        if(nrOfMicroservices == 1) {
+            return Optional.empty();
+        }
+
+        List<Dependency> returnList = new ArrayList<>();
+        for(int i = 1; i < nrOfMicroservices; i++) {
+            String fromService = microservices.get(i - 1);
+            String toService = microservices.get(i);
+            Dependency dependency = new Dependency(fromService, toService);
+            returnList.add(dependency);
+        }
+
+        return Optional.of(returnList);
     }
 }

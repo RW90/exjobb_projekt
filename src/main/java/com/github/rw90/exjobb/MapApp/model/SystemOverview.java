@@ -1,6 +1,7 @@
 package com.github.rw90.exjobb.MapApp.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SystemOverview {
@@ -49,5 +50,9 @@ public class SystemOverview {
                 "services=" + services +
                 ", dependencies=" + dependencies +
                 '}';
+    }
+
+    public boolean addDependencies(List<Dependency> dependencies) {
+        return this.dependencies.addAll(dependencies);
     }
 }

@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -57,8 +58,8 @@ public class SystemOverviewService {
         } else {
             Trace traceToAdd = traceMap.getOldestTrace();
             traceMap.addNewTrace(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
-            List<Dependency> dependencies = traceToAdd.getDependencies();
-            if(system.addDependencies(dependencies)) {
+            Optional<List<Dependency>> dependencies = traceToAdd.getDependencies();
+            if(dependencies.isPresent() && system.addDependencies(dependencies.get())) {
                 wrapper.addOverview(
                         new SystemOverviewWrapper(
                                 new SystemOverview(system), "New dependency added"
