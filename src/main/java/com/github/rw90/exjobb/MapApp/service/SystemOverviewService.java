@@ -57,9 +57,12 @@ public class SystemOverviewService {
         if(traceMap.traceExists(wrapper.logLine.getTraceId())) {
             traceMap.insertService(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
         } else {
-            Trace traceToAdd = traceMap.getOldestTrace();
+            Optional<Trace> traceToAdd = traceMap.getOldestTrace();
             traceMap.addNewTrace(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
-            Optional<List<Dependency>> dependencies = traceToAdd.getDependencies();
+            Optional<List<Dependency>> dependencies = Optional.empty();
+            if(traceToAdd.isPresent()) {
+                dependencies = traceToAdd.get().getDependencies();
+            }
             if(dependencies.isPresent() && system.addDependencies(dependencies.get())) {
                 wrapper.addOverview(
                         new SystemOverviewWrapper(
@@ -67,6 +70,7 @@ public class SystemOverviewService {
                         )
                 );
             }
+            system.getDependencies().forEach(System.out::println);
         }
         return Flux.just(wrapper);
     }

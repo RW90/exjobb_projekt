@@ -1,11 +1,12 @@
 package com.github.rw90.exjobb.MapApp.model;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class TraceMap {
 
-    private final int MAX_ENTRIES = 5;
+    private final int MAX_ENTRIES = 2;
     private final TreeMap<LocalDateTime, UUID> timeUUIDMap;
     private final Map<UUID, Trace> uuidTraceMap;
 
@@ -26,18 +27,15 @@ public class TraceMap {
         timeUUIDMap.put(timestamp, traceId);
     }
 
-    public Trace getOldestTrace() {
+    public Optional<Trace> getOldestTrace() {
         UUID traceId;
-        if(timeUUIDMap.size() > MAX_ENTRIES) {
+        if(timeUUIDMap.keySet().size() > MAX_ENTRIES) {
             traceId = timeUUIDMap.pollFirstEntry().getValue();
             Trace lastTrace = uuidTraceMap.get(traceId);
             uuidTraceMap.remove(traceId);
-            return lastTrace;
-
-        } else {
-            traceId = timeUUIDMap.firstEntry().getValue();
-            return uuidTraceMap.get(traceId);
+            return Optional.of(lastTrace);
         }
+        return Optional.empty();
     }
 
     public void addNewTrace(UUID traceId, String serviceName, LocalDateTime timestamp) {

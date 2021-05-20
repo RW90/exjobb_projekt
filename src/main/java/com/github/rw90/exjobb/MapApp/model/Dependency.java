@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Dependency {
 
-    private final UUID id;
+    private UUID id;
     private String fromService;
     private String toService;
 
@@ -18,12 +18,20 @@ public class Dependency {
         this.toService = toService;
     }
 
+    public static Dependency copyOf(Dependency dependency) {
+        return new Dependency(dependency.getFromService(), dependency.getToService());
+    }
+
     public void setFromService(String fromService) {
         this.fromService = fromService;
     }
 
     public void setToService(String toService) {
         this.toService = toService;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getId() {
@@ -54,5 +62,13 @@ public class Dependency {
         int result = fromService != null ? fromService.hashCode() : 0;
         result = 31 * result + (toService != null ? toService.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Dependency{" +
+                "fromService='" + fromService + '\'' +
+                ", toService='" + toService + '\'' +
+                '}';
     }
 }

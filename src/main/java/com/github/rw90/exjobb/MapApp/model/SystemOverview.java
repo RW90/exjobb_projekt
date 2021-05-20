@@ -18,6 +18,7 @@ public class SystemOverview {
         this.services = new HashSet<>();
         other.getServices().forEach(service -> this.services.add(Microservice.copyOf(service)));
         this.dependencies = new HashSet<>();
+        other.getDependencies().forEach(dependency -> this.dependencies.add(Dependency.copyOf(dependency)));
     }
 
     public boolean addService(Microservice service) {
