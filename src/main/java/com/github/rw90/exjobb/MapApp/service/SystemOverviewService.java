@@ -28,51 +28,68 @@ public class SystemOverviewService {
         systemOverviewRepository.deleteAll().subscribe();
 
         return service.getAccessLogLines()
-                .flatMap(logLine -> detectNewMicroservice(system, logLine))
-                .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
-                .flatMap(wrapper -> detectNewTrace(system, wrapper, tracemap))
+                .flatMap(logLine -> {
+                  /*  ChangeEventWrapper wrapper = new ChangeEventWrapper();
+                    if (detectNewMicroservice(system, logLine)) {
+                        wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "New microservice: " + logLine.getServiceName()));
+                    }
+
+                    if (detectNewEndpoint(system, logLine)) {
+                        wrapper.addOverview(
+                                new SystemOverviewWrapper(
+                                        new SystemOverview(system), "New endpoint on " + logLine.getServiceName() + ": " + logLine.getMethod() + " " + logLine.getEndpoint()));
+                    }
+
+                    if (detectNewTrace(system, logLine, tracemap)) {
+                        wrapper.addOverview(
+                                new SystemOverviewWrapper(
+                                        new SystemOverview(system), "New dependency added"
+                                )
+                        );
+                    }*/
+                    ChangeEventWrapper wrapper = new ChangeEventWrapper();
+                    boolean a = detectNewMicroservice(system, logLine);
+                    boolean b = detectNewEndpoint(system, logLine);
+                    boolean c = detectNewTrace(system, logLine, tracemap);
+
+                    if (a || b || c) {
+                        wrapper.addOverview((
+                                new SystemOverviewWrapper(
+                                        new SystemOverview(system), "new changes"
+                                )
+                        ));
+                    }
+
+                    return Flux.just(wrapper);
+                })
                 .filter(wrapper -> wrapper.eventHasOccured)
                 .flatMap(this::saveAndReturn);
     }
 
-    private Flux<ChangeEventWrapper> detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
-        ChangeEventWrapper wrapper = new ChangeEventWrapper(logLine);
-        if (system.addService(new Microservice(logLine.getServiceName()))) {
-            wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "New microservice: " + logLine.getServiceName()));
-        }
-        return Flux.just(wrapper);
+    private boolean detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
+        return system.addService(new Microservice(logLine.getServiceName()));
     }
 
-    private Flux<ChangeEventWrapper> detectNewEndpoint(SystemOverview system, ChangeEventWrapper wrapper) {
-        Microservice service = system.getServiceByName(wrapper.logLine.getServiceName());
-        if (service.addEndpoint(new ApiEndpoint(wrapper.logLine.getMethod(), wrapper.logLine.getEndpoint()))) {
-            wrapper.addOverview(
-                    new SystemOverviewWrapper(
-                            new SystemOverview(system), "New endpoint on " + wrapper.logLine.getServiceName() + ": " + wrapper.logLine.getMethod() + " " + wrapper.logLine.getEndpoint()));
-        }
-        return Flux.just(wrapper);
+    private boolean detectNewEndpoint(SystemOverview system, AccessLogLine logLine) {
+        Microservice service = system.getServiceByName(logLine.getServiceName());
+        return service.addEndpoint(new ApiEndpoint(logLine.getMethod(), logLine.getEndpoint()));
     }
 
-    private Flux<ChangeEventWrapper> detectNewTrace(SystemOverview system, ChangeEventWrapper wrapper, TraceMap traceMap) {
-        if(traceMap.traceExists(wrapper.logLine.getTraceId())) {
-            traceMap.insertService(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
+    private boolean detectNewTrace(SystemOverview system, AccessLogLine logLine, TraceMap traceMap) {
+        if(traceMap.traceExists(logLine.getTraceId())) {
+            traceMap.insertService(logLine.getTraceId(), logLine.getServiceName(), logLine.getTimestamp());
         } else {
             Optional<Trace> traceToAdd = traceMap.getOldestTrace();
-            traceMap.addNewTrace(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
+            traceMap.addNewTrace(logLine.getTraceId(), logLine.getServiceName(), logLine.getTimestamp());
             Optional<List<Dependency>> dependencies = Optional.empty();
             if(traceToAdd.isPresent()) {
                 dependencies = traceToAdd.get().getDependencies();
             }
             if(dependencies.isPresent() && system.addDependencies(dependencies.get())) {
-                wrapper.addOverview(
-                        new SystemOverviewWrapper(
-                                new SystemOverview(system), "New dependency added"
-                        )
-                );
+                return true;
             }
-            system.getDependencies().forEach(System.out::println);
         }
-        return Flux.just(wrapper);
+        return false;
     }
 
     private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
@@ -81,16 +98,18 @@ public class SystemOverviewService {
     }
 
     private class ChangeEventWrapper {
-        private AccessLogLine logLine;
         private List<SystemOverviewWrapper> overviews;
         private boolean eventHasOccured;
 
-        private ChangeEventWrapper(AccessLogLine logLine) {
-            this.logLine = logLine;
+        private ChangeEventWrapper() {
             overviews = new LinkedList<>();
         }
 
         private Stream<SystemOverviewWrapper> getOverviews() {
+//            overviews.forEach(ov -> {
+//                System.out.println("------");
+//                ov.getSystemOverview().getDependencies().forEach(System.out::println);
+//            });
             return overviews.stream();
         }
 

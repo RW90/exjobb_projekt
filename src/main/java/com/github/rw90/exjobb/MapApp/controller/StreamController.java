@@ -25,6 +25,10 @@ public class StreamController {
         return service
                 .getStream()
                 .delayElements(Duration.ofMillis(300))
+                .doOnNext(wrapper -> {
+                    System.out.println("---");
+                    wrapper.getSystemOverview().getDependencies().forEach(System.out::println);
+                })
                 .concatWith(Flux.just(new SystemOverviewWrapper(new SystemOverview(), "endofstream")));
     }
 }

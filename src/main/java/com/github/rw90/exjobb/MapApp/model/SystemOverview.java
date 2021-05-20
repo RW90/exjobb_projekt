@@ -54,6 +54,14 @@ public class SystemOverview {
     }
 
     public boolean addDependencies(List<Dependency> dependencies) {
-        return this.dependencies.addAll(dependencies);
+        boolean changed = false;
+        for (Dependency dependency : dependencies) {
+            if (this.dependencies.add(dependency)) {
+                changed = true;
+            }
+        }
+
+        return changed;
     }
+
 }
