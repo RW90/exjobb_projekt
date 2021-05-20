@@ -30,6 +30,7 @@ public class SystemOverviewService {
         return service.getAccessLogLines()
                 .flatMap(logLine -> detectNewMicroservice(system, logLine))
                 .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
+                .flatMap(wrapper -> detectNewTrace(system, wrapper, tracemap))
                 .filter(wrapper -> wrapper.eventHasOccured)
                 .flatMap(this::saveAndReturn);
     }
@@ -67,7 +68,6 @@ public class SystemOverviewService {
                 );
             }
         }
-        wrapper.setTraceMap(traceMap);
         return Flux.just(wrapper);
     }
 
@@ -79,7 +79,6 @@ public class SystemOverviewService {
     private class ChangeEventWrapper {
         private AccessLogLine logLine;
         private List<SystemOverviewWrapper> overviews;
-        private TraceMap traceMap;
         private boolean eventHasOccured;
 
         private ChangeEventWrapper(AccessLogLine logLine) {
@@ -96,12 +95,5 @@ public class SystemOverviewService {
             eventHasOccured = true;
         }
 
-        private TraceMap getTraceMap() {
-            return traceMap;
-        }
-
-        private void setTraceMap(TraceMap traceMap) {
-            this.traceMap = traceMap;
-        }
     }
 }
