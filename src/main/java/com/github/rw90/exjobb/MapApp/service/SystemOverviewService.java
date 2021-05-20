@@ -22,6 +22,7 @@ public class SystemOverviewService {
     }
 
     public Flux<SystemOverviewWrapper> getStream() throws IOException {
+        TraceMap tracemap = new TraceMap();
         SystemOverview system = new SystemOverview();
         systemOverviewRepository.deleteAll().subscribe();
 
@@ -50,6 +51,25 @@ public class SystemOverviewService {
         return Flux.just(wrapper);
     }
 
+    private Flux<ChangeEventWrapper> detectNewTrace(SystemOverview system, ChangeEventWrapper wrapper, TraceMap traceMap) {
+        if(traceMap.traceExists(wrapper.logLine.getTraceId())) {
+            traceMap.insertService(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
+        } else {
+            Trace traceToAdd = traceMap.getOldestTrace();
+            traceMap.addNewTrace(wrapper.logLine.getTraceId(), wrapper.logLine.getServiceName(), wrapper.logLine.getTimestamp());
+            List<Dependency> dependencies = traceToAdd.getDependencies();
+            if(system.addDependencies(dependencies)) {
+                wrapper.addOverview(
+                        new SystemOverviewWrapper(
+                                new SystemOverview(system), "New dependency added"
+                        )
+                );
+            }
+        }
+        wrapper.setTraceMap(traceMap);
+        return Flux.just(wrapper);
+    }
+
     private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
         wrapper.getOverviews().forEach(overview -> systemOverviewRepository.save(overview).subscribe());
         return Flux.fromStream(wrapper.getOverviews());
@@ -58,6 +78,7 @@ public class SystemOverviewService {
     private class ChangeEventWrapper {
         private AccessLogLine logLine;
         private List<SystemOverviewWrapper> overviews;
+        private TraceMap traceMap;
         private boolean eventHasOccured;
 
         private ChangeEventWrapper(AccessLogLine logLine) {
@@ -72,6 +93,14 @@ public class SystemOverviewService {
         private void addOverview(SystemOverviewWrapper overview) {
             overviews.add(overview);
             eventHasOccured = true;
+        }
+
+        private TraceMap getTraceMap() {
+            return traceMap;
+        }
+
+        private void setTraceMap(TraceMap traceMap) {
+            this.traceMap = traceMap;
         }
     }
 }
