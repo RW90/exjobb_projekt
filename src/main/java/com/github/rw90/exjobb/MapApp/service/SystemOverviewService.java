@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class SystemOverviewService {
@@ -29,33 +27,33 @@ public class SystemOverviewService {
 
         return service.getAccessLogLines()
                 .flatMap(logLine -> {
-                  /*  ChangeEventWrapper wrapper = new ChangeEventWrapper();
-                    if (detectNewMicroservice(system, logLine)) {
-                        wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "New microservice: " + logLine.getServiceName()));
-                    }
-
-                    if (detectNewEndpoint(system, logLine)) {
-                        wrapper.addOverview(
-                                new SystemOverviewWrapper(
-                                        new SystemOverview(system), "New endpoint on " + logLine.getServiceName() + ": " + logLine.getMethod() + " " + logLine.getEndpoint()));
-                    }
-
-                    if (detectNewTrace(system, logLine, tracemap)) {
-                        wrapper.addOverview(
-                                new SystemOverviewWrapper(
-                                        new SystemOverview(system), "New dependency added"
-                                )
-                        );
-                    }*/
+                    StringBuilder changes = new StringBuilder(logLine.getTimestamp() + ":");
                     ChangeEventWrapper wrapper = new ChangeEventWrapper();
-                    boolean a = detectNewMicroservice(system, logLine);
-                    boolean b = detectNewEndpoint(system, logLine);
-                    boolean c = detectNewTrace(system, logLine, tracemap);
 
-                    if (a || b || c) {
+                    boolean hasNewMicroservice = detectNewMicroservice(system, logLine);
+
+                    if (hasNewMicroservice) {
+                        changes.append(" " + "Service " + logLine.getServiceName() + " added;");
+                    }
+
+                    boolean hasNewEndpoint = detectNewEndpoint(system, logLine);
+
+                    if (hasNewEndpoint) {
+                        changes.append(" " + logLine.getMethod() + " " + logLine.getEndpoint() + " added on " + logLine.getServiceName() + ";");
+                    }
+
+                    Optional<List<Dependency>> dependencies = detectNewTrace(system, logLine, tracemap);
+
+                    if (dependencies.isPresent()) {
+                        dependencies.get().forEach(dependency ->
+                            changes.append(" new dependency from " + dependency.getFromService() + " to " + dependency.getToService() + ";")
+                        );
+                    }
+
+                    if (hasNewMicroservice || hasNewEndpoint || dependencies.isPresent()) {
                         wrapper.addOverview((
                                 new SystemOverviewWrapper(
-                                        new SystemOverview(system), "new changes"
+                                        new SystemOverview(system), changes.toString()
                                 )
                         ));
                     }
@@ -75,7 +73,7 @@ public class SystemOverviewService {
         return service.addEndpoint(new ApiEndpoint(logLine.getMethod(), logLine.getEndpoint()));
     }
 
-    private boolean detectNewTrace(SystemOverview system, AccessLogLine logLine, TraceMap traceMap) {
+    private Optional<List<Dependency>> detectNewTrace(SystemOverview system, AccessLogLine logLine, TraceMap traceMap) {
         if(traceMap.traceExists(logLine.getTraceId())) {
             traceMap.insertService(logLine.getTraceId(), logLine.getServiceName(), logLine.getTimestamp());
         } else {
@@ -86,35 +84,27 @@ public class SystemOverviewService {
                 dependencies = traceToAdd.get().getDependencies();
             }
             if(dependencies.isPresent() && system.addDependencies(dependencies.get())) {
-                return true;
+                return Optional.of(dependencies.get());
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
-        wrapper.getOverviews().forEach(overview -> systemOverviewRepository.save(overview).subscribe());
-        return Flux.fromStream(wrapper.getOverviews());
+        systemOverviewRepository.save(wrapper.getOverview()).subscribe();
+        return Flux.just(wrapper.getOverview());
     }
 
     private class ChangeEventWrapper {
-        private List<SystemOverviewWrapper> overviews;
+        SystemOverviewWrapper overview;
         private boolean eventHasOccured;
 
-        private ChangeEventWrapper() {
-            overviews = new LinkedList<>();
-        }
-
-        private Stream<SystemOverviewWrapper> getOverviews() {
-//            overviews.forEach(ov -> {
-//                System.out.println("------");
-//                ov.getSystemOverview().getDependencies().forEach(System.out::println);
-//            });
-            return overviews.stream();
+        private SystemOverviewWrapper getOverview() {
+            return overview;
         }
 
         private void addOverview(SystemOverviewWrapper overview) {
-            overviews.add(overview);
+            this.overview = overview;
             eventHasOccured = true;
         }
 
