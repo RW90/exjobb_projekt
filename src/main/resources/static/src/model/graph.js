@@ -32,7 +32,8 @@ class Graph {
      * @returns {*} An array of plain objects, parsable by the Cytoscape map, representing the SystemOverview instance
      */
     static transformOverviewToCytoscapeObjects(systemOverview) {
-        return systemOverview
+
+        const services = systemOverview
             .getServices()
             .map(service => ({
                 data: {
@@ -42,6 +43,18 @@ class Graph {
                 classes: service.getClasses(),
                 selectable: service.getSelectable()
             }));
+
+        const edges = systemOverview
+            .getDependencies()
+            .map(dependency => ({
+              data: {
+                  id: dependency.getId(),
+                  source: dependency.getFromService(),
+                  target: dependency.getToService()
+              }
+            }));
+
+        return services.concat(edges);
     }
 
     /**
