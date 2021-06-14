@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 @Service
 public class SystemOverviewService {
@@ -22,56 +21,92 @@ public class SystemOverviewService {
     }
 
     public Flux<SystemOverviewWrapper> getStream() throws IOException {
+        TraceMap tracemap = new TraceMap();
         SystemOverview system = new SystemOverview();
         systemOverviewRepository.deleteAll().subscribe();
 
         return service.getAccessLogLines()
-                .flatMap(logLine -> detectNewMicroservice(system, logLine))
-                .flatMap(wrapper -> detectNewEndpoint(system, wrapper))
+                .flatMap(logLine -> {
+                    StringBuilder changes = new StringBuilder(logLine.getTimestamp() + ":");
+                    ChangeEventWrapper wrapper = new ChangeEventWrapper();
+
+                    boolean hasNewMicroservice = detectNewMicroservice(system, logLine);
+
+                    if (hasNewMicroservice) {
+                        changes.append(" " + "Service " + logLine.getServiceName() + " added;");
+                    }
+
+                    boolean hasNewEndpoint = detectNewEndpoint(system, logLine);
+
+                    if (hasNewEndpoint) {
+                        changes.append(" " + logLine.getMethod() + " " + logLine.getEndpoint() + " added on " + logLine.getServiceName() + ";");
+                    }
+
+                    Optional<List<Dependency>> dependencies = detectNewTrace(system, logLine, tracemap);
+
+                    if (dependencies.isPresent()) {
+                        dependencies.get().forEach(dependency ->
+                            changes.append(" new dependency from " + dependency.getFromService() + " to " + dependency.getToService() + ";")
+                        );
+                    }
+
+                    if (hasNewMicroservice || hasNewEndpoint || dependencies.isPresent()) {
+                        wrapper.addOverview((
+                                new SystemOverviewWrapper(
+                                        new SystemOverview(system), changes.toString()
+                                )
+                        ));
+                    }
+
+                    return Flux.just(wrapper);
+                })
                 .filter(wrapper -> wrapper.eventHasOccured)
                 .flatMap(this::saveAndReturn);
     }
 
-    private Flux<ChangeEventWrapper> detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
-        ChangeEventWrapper wrapper = new ChangeEventWrapper(logLine);
-        if (system.addService(new Microservice(logLine.getServiceName()))) {
-            wrapper.addOverview(new SystemOverviewWrapper(new SystemOverview(system), "New microservice: " + logLine.getServiceName()));
-        }
-        return Flux.just(wrapper);
+    private boolean detectNewMicroservice(SystemOverview system, AccessLogLine logLine) {
+        return system.addService(new Microservice(logLine.getServiceName()));
     }
 
-    private Flux<ChangeEventWrapper> detectNewEndpoint(SystemOverview system, ChangeEventWrapper wrapper) {
-        Microservice service = system.getServiceByName(wrapper.logLine.getServiceName());
-        if (service.addEndpoint(new ApiEndpoint(wrapper.logLine.getMethod(), wrapper.logLine.getEndpoint()))) {
-            wrapper.addOverview(
-                    new SystemOverviewWrapper(
-                            new SystemOverview(system), "New endpoint on " + wrapper.logLine.getServiceName() + ": " + wrapper.logLine.getMethod() + " " + wrapper.logLine.getEndpoint()));
+    private boolean detectNewEndpoint(SystemOverview system, AccessLogLine logLine) {
+        Microservice service = system.getServiceByName(logLine.getServiceName());
+        return service.addEndpoint(new ApiEndpoint(logLine.getMethod(), logLine.getEndpoint()));
+    }
+
+    private Optional<List<Dependency>> detectNewTrace(SystemOverview system, AccessLogLine logLine, TraceMap traceMap) {
+        if(traceMap.traceExists(logLine.getTraceId())) {
+            traceMap.insertService(logLine.getTraceId(), logLine.getServiceName(), logLine.getTimestamp());
+        } else {
+            Optional<Trace> traceToAdd = traceMap.getOldestTrace();
+            traceMap.addNewTrace(logLine.getTraceId(), logLine.getServiceName(), logLine.getTimestamp());
+            Optional<List<Dependency>> dependencies = Optional.empty();
+            if(traceToAdd.isPresent()) {
+                dependencies = traceToAdd.get().getDependencies();
+            }
+            if(dependencies.isPresent() && system.addDependencies(dependencies.get())) {
+                return Optional.of(dependencies.get());
+            }
         }
-        return Flux.just(wrapper);
+        return Optional.empty();
     }
 
     private Flux<SystemOverviewWrapper> saveAndReturn(ChangeEventWrapper wrapper) {
-        wrapper.getOverviews().forEach(overview -> systemOverviewRepository.save(overview).subscribe());
-        return Flux.fromStream(wrapper.getOverviews());
+        systemOverviewRepository.save(wrapper.getOverview()).subscribe();
+        return Flux.just(wrapper.getOverview());
     }
 
     private class ChangeEventWrapper {
-        private AccessLogLine logLine;
-        private List<SystemOverviewWrapper> overviews;
+        SystemOverviewWrapper overview;
         private boolean eventHasOccured;
 
-        private ChangeEventWrapper(AccessLogLine logLine) {
-            this.logLine = logLine;
-            overviews = new LinkedList<>();
-        }
-
-        private Stream<SystemOverviewWrapper> getOverviews() {
-            return overviews.stream();
+        private SystemOverviewWrapper getOverview() {
+            return overview;
         }
 
         private void addOverview(SystemOverviewWrapper overview) {
-            overviews.add(overview);
+            this.overview = overview;
             eventHasOccured = true;
         }
+
     }
 }

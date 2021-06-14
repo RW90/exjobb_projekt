@@ -2,6 +2,7 @@ package com.github.rw90.exjobb.MapApp.model;
 
 import org.springframework.http.HttpMethod;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,12 +12,14 @@ public class AccessLogLine {
     private String endpoint;
     private String serviceName;
     private UUID traceId;
+    private LocalDateTime timestamp;
 
-    public AccessLogLine(HttpMethod method, String endpoint, String serviceName, UUID traceId) {
+    public AccessLogLine(HttpMethod method, String endpoint, String serviceName, UUID traceId, LocalDateTime timestamp) {
         this.method = method;
         this.endpoint = endpoint;
         this.serviceName = serviceName;
         this.traceId = traceId;
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -26,6 +29,7 @@ public class AccessLogLine {
                 ", endpoint='" + endpoint + '\'' +
                 ", serviceName='" + serviceName + '\'' +
                 ", traceId=" + traceId +
+                ", timestamp=" + timestamp +
                 '}';
     }
 
@@ -76,5 +80,9 @@ public class AccessLogLine {
 
     public void setTraceId(String traceId) {
         this.traceId = UUID.fromString(traceId);
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 }

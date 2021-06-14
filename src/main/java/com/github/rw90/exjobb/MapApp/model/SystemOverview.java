@@ -1,6 +1,7 @@
 package com.github.rw90.exjobb.MapApp.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SystemOverview {
@@ -17,6 +18,7 @@ public class SystemOverview {
         this.services = new HashSet<>();
         other.getServices().forEach(service -> this.services.add(Microservice.copyOf(service)));
         this.dependencies = new HashSet<>();
+        other.getDependencies().forEach(dependency -> this.dependencies.add(Dependency.copyOf(dependency)));
     }
 
     public boolean addService(Microservice service) {
@@ -50,4 +52,16 @@ public class SystemOverview {
                 ", dependencies=" + dependencies +
                 '}';
     }
+
+    public boolean addDependencies(List<Dependency> dependencies) {
+        boolean changed = false;
+        for (Dependency dependency : dependencies) {
+            if (this.dependencies.add(dependency)) {
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
 }

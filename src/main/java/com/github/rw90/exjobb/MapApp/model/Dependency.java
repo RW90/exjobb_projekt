@@ -4,37 +4,71 @@ import java.util.UUID;
 
 public class Dependency {
 
-    private final UUID id;
-    private Microservice firstService;
-    private Microservice secondService;
+    private UUID id;
+    private String fromService;
+    private String toService;
 
     public Dependency() {
         this.id = UUID.randomUUID();
     }
 
-    public Dependency(Microservice firstService, Microservice secondService) {
+    public Dependency(String fromService, String toService) {
         this();
-        this.firstService = firstService;
-        this.secondService = secondService;
+        this.fromService = fromService;
+        this.toService = toService;
     }
 
-    public void setFirstService(Microservice firstService) {
-        this.firstService = firstService;
+    public static Dependency copyOf(Dependency dependency) {
+        return new Dependency(dependency.getFromService(), dependency.getToService());
     }
 
-    public void setSecondService(Microservice secondService) {
-        this.secondService = secondService;
+    public void setFromService(String fromService) {
+        this.fromService = fromService;
+    }
+
+    public void setToService(String toService) {
+        this.toService = toService;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public Microservice getFirstService() {
-        return firstService;
+    public String getFromService() {
+        return fromService;
     }
 
-    public Microservice getSecondService() {
-        return secondService;
+    public String getToService() {
+        return toService;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Dependency that = (Dependency) o;
+
+        if (fromService != null ? !fromService.equals(that.fromService) : that.fromService != null) return false;
+        return toService != null ? toService.equals(that.toService) : that.toService == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fromService != null ? fromService.hashCode() : 0;
+        result = 31 * result + (toService != null ? toService.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Dependency{" +
+                "fromService='" + fromService + '\'' +
+                ", toService='" + toService + '\'' +
+                '}';
     }
 }

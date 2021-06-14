@@ -1,5 +1,6 @@
 import Microservice from './microservice.js';
 import Endpoint from './endpoint.js';
+import Dependency from "./dependency.js";
 
 /**
  * Represents a map / runtime model / runtime architecture of the system.
@@ -28,7 +29,7 @@ class SystemOverview {
         const services = snapshot.services
             .map(({name, endpoints}) => new Microservice(name, extractEndpoints(endpoints)));
 
-        const dependencies = [];
+        const dependencies = snapshot.dependencies.map(({id, fromService, toService}) => new Dependency(id, fromService, toService));
         return new SystemOverview(services, dependencies);
     }
 

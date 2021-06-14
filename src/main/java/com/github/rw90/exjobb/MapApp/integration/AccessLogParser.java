@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +40,8 @@ public class AccessLogParser implements LogParser<AccessLogLine> {
         String path = extractPath(logEntry);
         String serviceName = extractServiceName(logEntry);
         UUID corrId = extractCorrId(logEntry);
-        return new AccessLogLine(method, path, serviceName, corrId);
+        LocalDateTime timestamp = extractTimestamp(logEntry);
+        return new AccessLogLine(method, path, serviceName, corrId, timestamp);
     }
 
     private HttpMethod extractMethod(String[] logEntry) {
@@ -70,6 +73,25 @@ public class AccessLogParser implements LogParser<AccessLogLine> {
         String logMessage = logEntry[MESSAGE_FIELD];
         String requestLine = StringUtils.substringBetween(logMessage, "\"");
         return requestLine.split(" ");
+    }
+
+    private LocalDateTime extractTimestamp(String[] logEntry) {
+
+
+        String regex = "(\\d{4}-\\d{2}\\-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3})";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(logEntry[0]);
+        String timeAsString = null;
+        if (matcher.find()) {
+            timeAsString = matcher.group(1);
+        }
+
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
+        if(timeAsString == null) { // TODO: Ta bort denna skit
+            return LocalDateTime.of(1900, 10,1,1,1);
+        }
+        return LocalDateTime.parse(timeAsString, timeFormat);
+
     }
 
 }
